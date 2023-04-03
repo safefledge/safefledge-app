@@ -54,6 +54,10 @@ export default function Dropdown({
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>){
         findMatches(e.target.value, dataOnRequest)
+        setHideOptions(true)
+        setTimeout(() => {
+            setHideOptions(false)
+        }, 10000)
     }
 
     function findMatches(wordToMatch: string, dataOnRequest: any){

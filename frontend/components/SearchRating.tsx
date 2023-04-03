@@ -2,6 +2,7 @@
 import { forwardRef, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { AiOutlineSearch, AiOutlineCalendar } from "react-icons/ai";
+import { BiArrowBack } from 'react-icons/bi'
 import {
   FaPlaneDeparture,
   FaPlaneArrival,
@@ -222,13 +223,29 @@ export default function SearchRating() {
               Go to next step
             </button>
               ) : (
-                <button
+                <div className="flex flex-row">
+                  {showSetPassengers && 
+                  <button
+                  onClick={() => {
+                    setShowSetPassengers(false);
+                    setCanSearch(false);
+                    setNextPage(false);
+                  }}
+                  className={`flex items-center mr-2 px-4 py-2 rounded-large font-bold text-white bg-blue-500 hover:bg-blue-600 transition-all ease-in`}
+                  >
+                   <BiArrowBack className="mr-2" />
+                   Go back
+                 </button>
+                  }
+            <button
              className={`flex items-center mr-2 px-4 py-2 rounded-large font-bold text-white ${canSearch ? "bg-blue-500 hover:bg-blue-600 transition-all ease-in" : "bg-gray-500 hover:bg-gray-400 cursor-not-allowed transition-all ease-in "}`}
              disabled={canSearch ? false : true}
              >
               <AiOutlineSearch className="mr-2" />
               Search
             </button>
+                </div>
+                
               )
             }
           </div>

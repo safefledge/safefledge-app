@@ -44,6 +44,10 @@ export default function Dropdown({
 
     ///search logic
 
+
+    //TODO: User stops typing for 1 second, then search is triggered
+    //TODO: When user stops typing and delete his search, then show all options
+    
     useEffect(() => {
         if(eventChange){
             handleChange(eventChange)

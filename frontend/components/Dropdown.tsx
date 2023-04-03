@@ -1,4 +1,5 @@
 "use client"
+import escapeRegExp from "@/utils/escapeRegExp";
 import { useState, useEffect, useRef, MouseEvent } from "react"
 import { FaGlobe, FaMapMarkerAlt, FaPlaneDeparture } from 'react-icons/fa';
 
@@ -78,8 +79,9 @@ export default function Dropdown({
     }
 
     function findMatches(wordToMatch: string, dataOnRequest: any){
+        const escapedWord = escapeRegExp(wordToMatch)
         const newData = dataOnRequest.filter((place: {label: string, country: string}) => {
-            const regex = new RegExp(wordToMatch, 'gi')
+            const regex = new RegExp(escapedWord, 'gi')
             return place.label.match(regex)
         })
         setSearchResults(newData)
@@ -87,8 +89,9 @@ export default function Dropdown({
     }
 
     function countryMatch(wordToMatch: string, dataOnRequest: any){
+        const escapedWord = escapeRegExp(wordToMatch)
         const newData = dataOnRequest.filter((place: {label: string, country: string}) => {
-            const regex = new RegExp(wordToMatch, 'gi')
+            const regex = new RegExp(escapedWord, 'gi')
             return place.country.match(regex)
         })
         setSearchResults(newData)

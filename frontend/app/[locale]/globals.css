@@ -1,0 +1,28 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes fade-in-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-20%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+.animate-fade-in-left {
+  animation-name: fade-in-left;
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+}
+
+@layer base {
+  html {
+    font-family: 'Montserrat', sans-serif;
+  }
+}

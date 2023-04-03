@@ -10,10 +10,12 @@ import {
 import Link from "./Link";
 import DatePicker from 'react-datepicker';
 import './css/DatePickerCustom.css'
+import Dropdown from "./Dropdown";
 
 export default function SearchRating() {
   const [flightType, setFlightType] = useState("round-trip");
   const [showSetPassengers, setShowSetPassengers] = useState(false);
+  const [nextPage, setNextPage] = useState(false);
   const t = useTranslations("Home");
 
 
@@ -27,6 +29,9 @@ export default function SearchRating() {
 
   const [departureCity, setDepartureCity] = useState("");
   const [arrivalCity, setArrivalCity] = useState("");
+
+  const [departutreCityModal, setDepartureCityModal] = useState(false);
+  const [arrivalCityModal, setArrivalCityModal] = useState(false);
 
 
   /// Passengers states
@@ -104,14 +109,42 @@ export default function SearchRating() {
     setReturnDate(end);
   }
 
+  const onChangeRangeOneWay = (dates: any) => {
+    const [start] = dates;
+    setDepartureDate(start);
+  }
+
+  const handleButtonClick = (type: string) => {
+
+  }
 
   useEffect(() => {
-    if (departureCity.length > 0 && arrivalCity.length > 0 && departureDate != null && returnDate != null) {
-      setShowSetPassengers(true);
-    } else {
-      setShowSetPassengers(false);
+    setArrivalCityModal(false);
+    setDepartureCityModal(false);
+  },[flightType])
+
+
+  useEffect(() => {
+    if(flightType === "round-trip") {
+      if(departureCity && arrivalCity && departureDate && returnDate) {
+        setNextPage(true);
+      } else {
+        setNextPage(false);
+      }
+    } else if (flightType === "one-way") {
+      if(departureCity && arrivalCity && departureDate) {
+        setNextPage(true);
+      } else {
+        setNextPage(false);
+      }
+    } else if (flightType === "multi-city") {
+      if(departureCity && arrivalCity && departureDate) {
+        setNextPage(true);
+      } else {
+        setNextPage(false);
+      }
     }
-  }, [departureCity, arrivalCity]);
+  }, [departureCity, arrivalCity, departureDate]);
 
   const containerClass =
     flightType === "round-trip"
@@ -139,8 +172,9 @@ export default function SearchRating() {
             <button
               className={`px-4 py-2 rounded-large font-bold text-white ${
                 flightType === "round-trip" ? "bg-blue-500" : "bg-gray-500"
-              } mr-4`}
+              } mr-4 ${showSetPassengers === true ? "cursor-not-allowed" : ""}`}
               onClick={() => setFlightType("round-trip")}
+              disabled={showSetPassengers ? true : false}
               style={{ transition: "background-color 0.3s" }}
             >
               {t("round_trip_flight")}
@@ -148,8 +182,9 @@ export default function SearchRating() {
             <button
               className={`px-4 py-2 rounded-large font-bold text-white ${
                 flightType === "one-way" ? "bg-blue-500" : "bg-gray-500"
-              } mr-4`}
+              } mr-4 ${showSetPassengers === true ? "cursor-not-allowed" : ""}`}
               onClick={() => setFlightType("one-way")}
+              disabled={showSetPassengers ? true : false}
               style={{ transition: "background-color 0.3s" }}
             >
               {t("one_way_flight")}
@@ -157,21 +192,37 @@ export default function SearchRating() {
             <button
               className={`px-4 py-2 rounded-large font-bold text-white ${
                 flightType === "multi-flight" ? "bg-blue-500" : "bg-gray-500"
-              }`}
+              } ${showSetPassengers === true ? "cursor-not-allowed" : ""}`}
               onClick={() => setFlightType("multi-flight")}
+              disabled={showSetPassengers ? true : false}
               style={{ transition: "background-color 0.3s" }}
             >
               {t("multi_city_flight")}
             </button>
           </div>
           <div>
-            <button
-             className={`flex items-center mr-2 px-4 py-2 rounded-large font-bold text-white bg-gray-500 ${canSearch ? "hover:bg-blue-500 transition-all ease-in" : "cursor-not-allowed"}`}
+            {
+              nextPage ? (
+                <button
+             className={`flex items-center mr-2 px-4 py-2 rounded-large font-bold text-white  bg-blue-500 transition-all ease-in hover:bg-blue-600`}
+             onClick={() => {
+              setShowSetPassengers(true);
+              setNextPage(false);
+             }}
+             >
+              <AiOutlineSearch className="mr-2" />
+              Go to next step
+            </button>
+              ) : (
+                <button
+             className={`flex items-center mr-2 px-4 py-2 rounded-large font-bold text-white ${canSearch ? "bg-blue-500 hover:bg-blue-600 transition-all ease-in" : "bg-gray-500 hover:bg-gray-400 cursor-not-allowed transition-all ease-in "}`}
              disabled={canSearch ? false : true}
              >
               <AiOutlineSearch className="mr-2" />
               Search
             </button>
+              )
+            }
           </div>
         </div>
         {showSetPassengers === false ? (
@@ -203,7 +254,7 @@ export default function SearchRating() {
         </div>}
             <div className="relative">
               <label
-                htmlFor="departure-input"
+                htmlFor="departure-city-input"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
                 {t("Hero_search_placeholder_3")}
@@ -212,18 +263,28 @@ export default function SearchRating() {
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 mt-6">
                   <FaPlaneDeparture className="text-gray-400 text-lg" />
                 </span>
-                <input
-                  type="text"
-                  id="departure-input"
-                  placeholder="Airport or City"
-                  onChange={(e) => setDepartureCity(e.target.value)}
-                  className="w-full px-4 py-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent pl-10"
+                <button 
+                id="departure-city-input"
+                value={departureCity}
+                aria-haspopup="true"
+                aria-expanded={departutreCityModal}
+                className="w-full px-4 py-2 text-gray-400 placeholder-gray-400 bg-white border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-300 ease-in-out pl-10"
+                onClick={() => setDepartureCityModal(!departutreCityModal)}
+                >
+                  {departureCity ? departureCity : "Select departure city"}
+                </button>
+                <Dropdown
+                  isOpen={departutreCityModal}
+                  setIsOpen={setDepartureCityModal}
+                  type="dep"
+                  setDepCity={setDepartureCity}
+                  setArrCity={setArrivalCity}
                 />
               </div>
             </div>
             <div className="relative mr-2">
               <label
-                htmlFor="departure-input"
+                htmlFor="arrival-input"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
                 {t("Hero_search_placeholder_4")}
@@ -232,13 +293,25 @@ export default function SearchRating() {
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 mt-6">
                   <FaPlaneArrival className="text-gray-400 text-lg" />
                 </span>
-                <input
-                  type="text"
-                  id="departure-input"
-                  placeholder="Airport or City"
-                  onChange={(e) => setArrivalCity(e.target.value)}
-                  className="w-full px-4 py-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent pl-10"
-                />
+                <button
+                  id="arrival-input"
+                  value={arrivalCity}
+                  aria-haspopup="true"
+                  aria-expanded={arrivalCityModal}
+                  className="w-full px-4 py-2 text-gray-400 placeholder-gray-400 bg-white border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-300 ease-in-out pl-10"
+                  onClick={() => setArrivalCityModal(!arrivalCityModal)}
+                >
+                  {arrivalCity ? arrivalCity : "Select arrival city"}
+                </button>
+                {arrivalCityModal && (
+            <Dropdown 
+            isOpen={arrivalCityModal}
+            setIsOpen={setArrivalCityModal}
+            type="arr"
+            setArrCity={setArrivalCity}
+            setDepCity={setDepartureCity}
+            />
+          )}
               </div>
             </div>
           </div>
@@ -268,7 +341,6 @@ export default function SearchRating() {
                     infants > 0 ? infants : "No"
                   } Infant${infants > 1 ? "s" : ""}`}
                   onClick={() => setShowOptions(!showOptions)}
-                  onBlur={() => setShowOptions(false)}
                   className="w-full px-4 py-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent pl-10 cursor-pointer"
                 />
                 <div className="flex items-center ml-4">

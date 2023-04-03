@@ -16,6 +16,10 @@ export default function SearchRating() {
   const [flightType, setFlightType] = useState("round-trip");
   const [showSetPassengers, setShowSetPassengers] = useState(false);
   const [nextPage, setNextPage] = useState(false);
+  const [disabledInput, setDisabledInput] = useState(false);
+
+  const [inputEvent, setInputEvent] = useState<React.ChangeEvent<HTMLInputElement>>();
+
   const t = useTranslations("Home");
 
 
@@ -32,6 +36,9 @@ export default function SearchRating() {
 
   const [departutreCityModal, setDepartureCityModal] = useState(false);
   const [arrivalCityModal, setArrivalCityModal] = useState(false);
+
+  const [departurePlaceholder, setDeparturePlaceholder] = useState<string>("Country, city or airport");
+  const [arrivalPlaceholder, setArrivalPlaceholder] = useState<string>("Country, city or airport");
 
 
   /// Passengers states
@@ -117,6 +124,7 @@ export default function SearchRating() {
   const handleButtonClick = (type: string) => {
 
   }
+
 
   useEffect(() => {
     setArrivalCityModal(false);
@@ -263,22 +271,31 @@ export default function SearchRating() {
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 mt-6">
                   <FaPlaneDeparture className="text-gray-400 text-lg" />
                 </span>
-                <button 
+                <input 
                 id="departure-city-input"
                 value={departureCity}
                 aria-haspopup="true"
                 aria-expanded={departutreCityModal}
                 className="w-full px-4 py-2 text-gray-400 placeholder-gray-400 bg-white border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-300 ease-in-out pl-10"
                 onClick={() => setDepartureCityModal(!departutreCityModal)}
+                placeholder={departurePlaceholder}
+                onChange={disabledInput ? () => {} : (e) => {
+                    setDepartureCityModal(true);
+                    setDepartureCity(e.target.value);
+                    setInputEvent(e);
+                }}
                 >
-                  {departureCity ? departureCity : "Select departure city"}
-                </button>
+                </input>
                 <Dropdown
+                // @ts-ignore
+                  eventChange={inputEvent}
+                  disable={setDisabledInput}
                   isOpen={departutreCityModal}
                   setIsOpen={setDepartureCityModal}
                   type="dep"
                   setDepCity={setDepartureCity}
                   setArrCity={setArrivalCity}
+                  setPlaceholder={setDeparturePlaceholder}
                 />
               </div>
             </div>
@@ -293,23 +310,33 @@ export default function SearchRating() {
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 mt-6">
                   <FaPlaneArrival className="text-gray-400 text-lg" />
                 </span>
-                <button
+                <input
                   id="arrival-input"
                   value={arrivalCity}
                   aria-haspopup="true"
                   aria-expanded={arrivalCityModal}
+                  placeholder={arrivalPlaceholder}
                   className="w-full px-4 py-2 text-gray-400 placeholder-gray-400 bg-white border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-300 ease-in-out pl-10"
                   onClick={() => setArrivalCityModal(!arrivalCityModal)}
+                  onChange={disabledInput ? () => {} : (e) => {
+                    setArrivalCityModal(true);
+                    setArrivalCity(e.target.value);
+                    setInputEvent(e);
+                  }}
                 >
-                  {arrivalCity ? arrivalCity : "Select arrival city"}
-                </button>
+                  
+                </input>
                 {arrivalCityModal && (
             <Dropdown 
+            //@ts-ignore
+            setEventChange={inputEvent}
+            disable={setDisabledInput}
             isOpen={arrivalCityModal}
             setIsOpen={setArrivalCityModal}
             type="arr"
             setArrCity={setArrivalCity}
             setDepCity={setDepartureCity}
+            setPlaceholder={setArrivalPlaceholder}
             />
           )}
               </div>

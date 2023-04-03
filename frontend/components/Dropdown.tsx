@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useRef, MouseEvent } from "react"
-import { FaGlobe, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaGlobe, FaMapMarkerAlt, FaPlaneDeparture } from 'react-icons/fa';
 
 export default function Dropdown({
     isOpen,
@@ -24,7 +24,6 @@ export default function Dropdown({
     const [selected, setSelected] = useState("Select an option")
     const [options, setOptions] = useState([
         { label: 'Suprise me!', icon: <FaGlobe /> },
-        { label: 'Search...', icon: <FaMapMarkerAlt /> },
     ])
     const [isFocused, setIsFocused] = useState(false)
     const [hideOptions, setHideOptions] = useState(false)
@@ -32,9 +31,16 @@ export default function Dropdown({
     const [optionChosen, setOptionChosen] = useState<number | null>(null)
 
     const [dataOnRequest, setDataOnRequest] = useState([
-        {label: "Warszawa", icon: <FaMapMarkerAlt />},
-        {label: "Kraków", icon: <FaMapMarkerAlt />},
-        {label: "Gdańsk", icon: <FaMapMarkerAlt />},
+        {label: "Warszawa (wszystkie lotniska)", icon: <FaMapMarkerAlt />, country: "Polska"},
+        {label: "Warszawa Chopina (WAW)", icon: <FaPlaneDeparture />, country: "Polska"},
+        {label: "Kraków", icon: <FaMapMarkerAlt />, country: "Polska"},
+        {label: "Gdańsk", icon: <FaMapMarkerAlt />, country: "Polska"},
+        {label: "Wrocław", icon: <FaMapMarkerAlt />, country: "Polska"},
+        {label: "Poznań", icon: <FaMapMarkerAlt />, country: "Polska"},
+        {label: "Katowice", icon: <FaMapMarkerAlt />, country: "Polska"},
+        {label: "Szczecin", icon: <FaMapMarkerAlt />, country: "Polska"},
+        {label: "Gdynia", icon: <FaMapMarkerAlt />, country: "Polska"},
+        {label: "Nowy Jork", icon: <FaMapMarkerAlt />, country: "USA"},
     ])
 
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -57,20 +63,36 @@ export default function Dropdown({
     }, [eventChange])
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>){
-        findMatches(e.target.value, dataOnRequest)
+        const matches = findMatches(e.target.value, dataOnRequest)
+        if(matches.length === 0){
+            const countryMatches = countryMatch(e.target.value, dataOnRequest)
+            if(countryMatches.length === 0){
+               console.warn("No matches")
+            } 
+        }
         setHideOptions(true)
         setTimeout(() => {
             setHideOptions(false)
+            setSearchResults([])
         }, 10000)
     }
 
     function findMatches(wordToMatch: string, dataOnRequest: any){
-        const newData = dataOnRequest.filter((place: {label: string}) => {
+        const newData = dataOnRequest.filter((place: {label: string, country: string}) => {
             const regex = new RegExp(wordToMatch, 'gi')
             return place.label.match(regex)
         })
         setSearchResults(newData)
-        
+        return newData
+    }
+
+    function countryMatch(wordToMatch: string, dataOnRequest: any){
+        const newData = dataOnRequest.filter((place: {label: string, country: string}) => {
+            const regex = new RegExp(wordToMatch, 'gi')
+            return place.country.match(regex)
+        })
+        setSearchResults(newData)
+        return newData
     }
 
     useEffect(() => {
@@ -80,10 +102,8 @@ export default function Dropdown({
             setIsOpen(false);
           }
         }
-    
         //@ts-ignore
         window.addEventListener('click', handleClickOutside);
-    
         return () => {
             //@ts-ignore
           window.removeEventListener('click', handleClickOutside);
@@ -94,18 +114,6 @@ export default function Dropdown({
         setIsOpen(isOpen)
     }, [isOpen])
 
-    function toggle(){
-        setIsOpen(!isOpen)
-    }
-
-    function select(option: string){
-        if(type === "dep"){
-            setDepCity(option)
-        } else {
-            setArrCity(option)
-        }
-        setIsOpen(false)
-    }
 
     function selectOption(option: {label: string, icon: JSX.Element}, index: number){
         if(index === 0){
@@ -142,19 +150,22 @@ export default function Dropdown({
     return (
        <>
        {isOpen && type === "dep" ? (
-              <div className={`origin-top-right absolute top-full right-0 mt-2  w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 transition-all duration-500 ease-out transform ${isOpen ? 'opacity-100 visible scale-y-100' : 'opacity-0 invisible scale-y-0'}`}>
+              <div className={`origin-top-right absolute top-full mt-2  w-dropdown rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 transition-all duration-500 ease-out transform ${isOpen ? 'opacity-100 visible scale-y-100' : 'opacity-0 invisible scale-y-0'}`}>
               <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="dropdown-menu">
                 { hideOptions === false &&
                     options.map((option, index) => (
-                            <button key={index} onClick={() => selectOption(option, index)} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem">
+                            <button key={index} onClick={() => selectOption(option, index)} className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem">
                             {option.icon && <span className="mr-2">{option.icon}</span>}
                             {option.label}
                           </button>
                     ))}
-                {searchResults.map((option: {label: string, icon: JSX.Element}, index: number) => (
-                        <button key={index} onClick={() => manualSearch(option, index, "dep")} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem">
+                {searchResults.map((option: {label: string, icon: JSX.Element, country: string}, index: number) => (
+                        <button key={index} onClick={() => manualSearch(option, index, "dep")} className="flex justify-start w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem">
                         {option.icon && <span className="mr-2">{option.icon}</span>}
+                        <div className="flex flex-col">
                         {option.label}
+                        <span className="text-xs text-gray-400 justify-start">{option.country}</span>
+                        </div>
                         </button>
                         ))}
                     

@@ -27,6 +27,7 @@ module.exports = {
         'date-picker': '480px',
         'footer-width': '100%',
         'footer-logo': '300px',
+        'dropdown': '400px',
       },
       colors: {
         'primary': '#0072C6',

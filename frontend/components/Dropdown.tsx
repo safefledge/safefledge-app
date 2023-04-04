@@ -79,7 +79,11 @@ export default function Dropdown({
     }
     const matches = findMatches(e.target.value, dataOnRequest);
     if (matches.length === 0) {
-      console.warn("No matches");
+      const matches = countryMatch(e.target.value, dataOnRequest);
+      if (matches.length === 0) {
+        setSearchResults([]);
+        console.warn("No matches found")
+      }
     }
     setHideOptions(true);
     setTimeout(() => {

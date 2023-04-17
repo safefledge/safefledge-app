@@ -7,8 +7,6 @@ import { useLocale } from "next-intl";
 
 export default function Navbar() {
   const locale = useLocale();
-
-
   return (
     <nav className="navbar w-navbar-width h-navbar-height bg-navbar-color flex flex-col md:flex-row justify-between mt-5 ml-5">
       <div className="flex items-start">

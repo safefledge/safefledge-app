@@ -17,8 +17,3 @@ export interface InputDateProps {
     className: string;
 }
 
-type Theme = 'light' | 'dark';
-
-export interface ITheme {
-    theme: Theme;
-}

@@ -7,8 +7,8 @@ import Navbar from '@/components/Navbar';
 
 
 export const metadata = {
-  title: 'SkyGuardian',
-  description: 'Find Safe Airlines and Airports',
+  title: 'SafeFledge',
+  description: 'For sake ',
 }
 
 type Props = {
@@ -56,7 +56,7 @@ export default async function LocaleLayout({
       }}
       >
       <section>
-        <Navbar theme='light' />
+        <Navbar/>
         <main>
           {children}
           </main>

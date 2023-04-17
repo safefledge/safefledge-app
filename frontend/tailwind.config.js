@@ -11,26 +11,13 @@ module.exports = {
   theme: {
     extend: {
       height: {
-        'hero-xxxl': '583px',
-        'search-xxl': '160px',
-        'search-xxl-smDevice': '400px',
-        'search-button': '37px',
-        'date-picker': '100px',
-        'footer-height': '431px'
+        'navbar-width': 'auto',
       },
       width: {
-        'hero-text': '512px',
-        'search-xxl': '1000px',
-        'search-xxl-smDevice': '400px',
-        'input-width': '163px',
-        'search-button': '131px',
-        'date-picker': '480px',
-        'footer-width': '100%',
-        'footer-logo': '300px',
-        'dropdown': '400px',
+        'navbar-height': '57px'
       },
       colors: {
-        'primary': '#0072C6',
+        'navbar-color': '#f8f8f81a',
       },
       borderRadius: {
         'large': '53px',

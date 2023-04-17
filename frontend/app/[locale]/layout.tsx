@@ -3,6 +3,7 @@ import {notFound} from 'next/navigation';
 import {ReactNode} from 'react';
 import './globals.css'
 import 'react-datepicker/dist/react-datepicker.css';
+import Navbar from '@/components/Navbar';
 
 
 export const metadata = {
@@ -55,7 +56,10 @@ export default async function LocaleLayout({
       }}
       >
       <section>
-        <main>{children}</main>
+        <Navbar theme='light' />
+        <main>
+          {children}
+          </main>
       </section>
     </NextIntlClientProvider>
   )

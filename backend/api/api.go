@@ -85,6 +85,25 @@ func getRecordFromAccidients(c *gin.Context) {
 
 }
 
+func createAirline(c *gin.Context) {
+	airline := &database.SafetyRating{}
+	err := c.ShouldBindJSON(airline)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
+	airline, err = database.NewCreateOrGetAirline(airline)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Airline created",
+	})
+}
+
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
@@ -105,6 +124,7 @@ func SetupRouter() *gin.Engine {
 	authGroup := r.Group("/api/v2").Use(handler.NoAuthRequired())
 	authGroup.GET("/scrape", scrapeWebSiteRequest)
 	authGroup.GET("/record/:id", getRecordFromAccidients)
+	authGroup.POST("/airline", createAirline)
 
 	return r
 }

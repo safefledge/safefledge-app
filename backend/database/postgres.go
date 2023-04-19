@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -14,14 +15,15 @@ var db *gorm.DB
 var err error
 
 type SafetyRating struct {
-	ID          int           `json:"id" gorm:"primaryKey"` //primary key
-	Airline     string        `json:"airline"`
-	Rating      float64       `json:"rating" gorm:"default:5.0"`
-	AlertLevel  string        `json:"alert_level" gorm:"default:'No safety issues'"`
-	OpinionData []OpinionData `json:"data" gorm:"many2many:airline_data;"`
-	Accidents   []Accident    `json:"accidents" gorm:"many2many:accidents;"`
-	CreatedAt   time.Time     `json:"created_at"`
-	UpdatedAt   time.Time     `json:"updated_at"`
+	ID                int           `json:"id" gorm:"primaryKey"` //primary key
+	Airline           string        `json:"airline"`
+	Rating            float64       `json:"rating" gorm:"default:5.0"`
+	AlertLevel        string        `json:"alert_level" gorm:"default:'No safety issues'"`
+	OpinionData       []OpinionData `json:"data" gorm:"many2many:airline_data;"`
+	Accidents         []Accident    `json:"accidents" gorm:"many2many:accidents;"`
+	NumberOfAccidents int           `json:"number_of_accidents"`
+	CreatedAt         time.Time     `json:"created_at"`
+	UpdatedAt         time.Time     `json:"updated_at"`
 }
 
 type OpinionData struct {
@@ -103,7 +105,10 @@ func AddRecordToAirlineAccidents(airline *SafetyRating, data *Accident) (err err
 	if err != nil {
 		return err
 	}
-	CalculateSafetyRating(airline)
+	err = CalculateSafetyRating(airline)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return
 }
 
@@ -127,6 +132,7 @@ func CalculateSafetyRating(airline *SafetyRating) (err error) {
 		return err
 	}
 	db.Model(airline).Update("updated_at", time.Now())
+	db.Model(airline).Update("number_of_accidents", len(accidents))
 	if safetyRating > 3.0 {
 		if err := db.Model(airline).Update("alert_level", "No safety issues").Error; err != nil {
 			return err

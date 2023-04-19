@@ -4,11 +4,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"safefledge.com/m/v2/api"
+	"safefledge.com/m/v2/database"
 	"safefledge.com/m/v2/lib"
 )
 
 func init() {
 	gin.SetMode(gin.ReleaseMode)
+	database.ConnectPostgresDB()
 }
 
 func main() {

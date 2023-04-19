@@ -16,11 +16,12 @@ var err error
 type SafetyRating struct {
 	ID          int           `json:"id" gorm:"primaryKey"` //primary key
 	Airline     string        `json:"airline"`
-	Rating      float64       `json:"rating"`
-	AlertLevel  string        `json:"alert_level"`
+	Rating      float64       `json:"rating" gorm:"default:5.0"`
+	AlertLevel  string        `json:"alert_level" gorm:"default:'No safety issues'"`
 	OpinionData []OpinionData `json:"data" gorm:"many2many:airline_data;"`
 	Accidents   []Accident    `json:"accidents" gorm:"many2many:accidents;"`
 	CreatedAt   time.Time     `json:"created_at"`
+	UpdatedAt   time.Time     `json:"updated_at"`
 }
 
 type OpinionData struct {
@@ -102,6 +103,47 @@ func AddRecordToAirlineAccidents(airline *SafetyRating, data *Accident) (err err
 	if err != nil {
 		return err
 	}
+	CalculateSafetyRating(airline)
+	return
+}
+
+func CalculateSafetyRating(airline *SafetyRating) (err error) {
+	var accidents []Accident
+	err = db.Model(&Accident{}).Where("safety_rating_id = ?", airline.ID).Find(&accidents).Error
+	if err != nil {
+		return err
+	}
+	var totalFatalities int
+	var totalPassengers int
+	var safetyRating float64
+	for _, accident := range accidents {
+		totalFatalities += accident.TotalFatalities
+		totalPassengers += accident.TotalPassengers
+	}
+	fatalRate := float64(totalFatalities) / float64(totalPassengers)
+	incidentRate := float64(len(accidents)) / float64(totalPassengers)
+	safetyRating = 5.0 - (fatalRate * 5.0) - (incidentRate * 5.0)
+	if err := db.Model(airline).Update("rating", safetyRating).Error; err != nil {
+		return err
+	}
+	db.Model(airline).Update("updated_at", time.Now())
+	if safetyRating > 3.0 {
+		if err := db.Model(airline).Update("alert_level", "No safety issues").Error; err != nil {
+			return err
+		}
+	} else if safetyRating > 2.0 {
+		if err := db.Model(airline).Update("alert_level", "Minor safety issues").Error; err != nil {
+			return err
+		}
+	} else if safetyRating > 1.0 {
+		if err := db.Model(airline).Update("alert_level", "Major safety issues").Error; err != nil {
+			return err
+		}
+	} else {
+		if err := db.Model(airline).Update("alert_level", "Critical safety issues").Error; err != nil {
+			return err
+		}
+	}
 	return
 }
 
@@ -111,6 +153,32 @@ func GetRecordFromAirlineAccidents(airlineID int) ([]Accident, error) {
 	if err != nil {
 		return nil, err
 	} else {
-		return accidents, nil
+		if len(accidents) == 0 {
+			return nil, nil
+		} else {
+			return accidents, nil
+		}
+	}
+}
+
+func AddRecordToAirlineOpinionData(airline *SafetyRating, data *OpinionData) (err error) {
+	err = db.Model(airline).Association("OpinionData").Append(data).Error
+	if err != nil {
+		return err
+	}
+	return
+}
+
+func GetRecordFromAirlineOpinionData(airlineID int) ([]OpinionData, error) {
+	var opinions []OpinionData
+	err := db.Model(&OpinionData{}).Where("safety_rating_id = ?", airlineID).Find(&opinions).Error
+	if err != nil {
+		return nil, err
+	} else {
+		if len(opinions) == 0 {
+			return nil, nil
+		} else {
+			return opinions, nil
+		}
 	}
 }

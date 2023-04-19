@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -77,8 +76,8 @@ func getRecordFromAccidients(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "No record found",
 		})
-	} else {
-		fmt.Printf("%+v", record)
+	}
+	if record != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Record found",
 		})

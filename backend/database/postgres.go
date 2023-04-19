@@ -113,6 +113,8 @@ func AddRecordToAirlineAccidents(airline *SafetyRating, data *Accident) (err err
 }
 
 func CalculateSafetyRating(airline *SafetyRating) (err error) {
+	//TODO: Add more complex logic to calculate safety rating
+	//TODO: Fix bug where accident are added multiple times
 	var accidents []Accident
 	err = db.Model(&Accident{}).Where("safety_rating_id = ?", airline.ID).Find(&accidents).Error
 	if err != nil {

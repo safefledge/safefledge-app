@@ -14,7 +14,7 @@ import (
 
 func home(c *gin.Context) {
 	c.JSON(200, gin.H{
-		"message": "Hello World",
+		"message": "Safe Fledge API",
 	})
 }
 
@@ -121,7 +121,7 @@ func SetupRouter() *gin.Engine {
 	r.GET("/", home)
 
 	//Data collection manually from aviation-safety.net
-	authGroup := r.Group("/api/v2").Use(handler.AuthRequiredAdmin())
+	authGroup := r.Group("/v2").Use(handler.AuthRequiredAdmin())
 	authGroup.GET("/scrape", scrapeWebSiteRequest)
 	authGroup.GET("/record/:id", getRecordFromAccidients)
 	authGroup.POST("/airline", createAirline)

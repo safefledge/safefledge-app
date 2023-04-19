@@ -105,54 +105,68 @@ func AddRecordToAirlineAccidents(airline *SafetyRating, data *Accident) (err err
 	if err != nil {
 		return err
 	}
-	err = CalculateSafetyRating(airline)
-	if err != nil {
-		log.Fatal(err)
-	}
 	return
 }
 
-func CalculateSafetyRating(airline *SafetyRating) (err error) {
-	//TODO: Add more complex logic to calculate safety rating
-	//TODO: Fix bug where accident are added multiple times
-	var accidents []Accident
-	err = db.Model(&Accident{}).Where("safety_rating_id = ?", airline.ID).Find(&accidents).Error
-	if err != nil {
-		return err
-	}
-	var totalFatalities int
-	var totalPassengers int
-	var safetyRating float64
-	for _, accident := range accidents {
-		totalFatalities += accident.TotalFatalities
-		totalPassengers += accident.TotalPassengers
-	}
-	fatalRate := float64(totalFatalities) / float64(totalPassengers)
-	incidentRate := float64(len(accidents)) / float64(totalPassengers)
-	safetyRating = 5.0 - (fatalRate * 5.0) - (incidentRate * 5.0)
-	if err := db.Model(airline).Update("rating", safetyRating).Error; err != nil {
-		return err
-	}
-	db.Model(airline).Update("updated_at", time.Now())
-	db.Model(airline).Update("number_of_accidents", len(accidents))
-	if safetyRating > 3.0 {
-		if err := db.Model(airline).Update("alert_level", "No safety issues").Error; err != nil {
-			return err
+func UpdateSafetyRatings() {
+	ticker := time.NewTicker(time.Hour)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		var airlines []SafetyRating
+		if err := db.Find(&airlines).Error; err != nil {
+			log.Println("falied to retrieve airlines:", err)
+			continue
 		}
-	} else if safetyRating > 2.0 {
-		if err := db.Model(airline).Update("alert_level", "Minor safety issues").Error; err != nil {
-			return err
+		for _, airline := range airlines {
+			var accidents []Accident
+			if err := db.Model(&Accident{}).Where("safety_rating_id = ?", airline.ID).Find(&accidents).Error; err != nil {
+				log.Println("failed to retrieve accidents:", err)
+				continue
+			}
+			var totalFatalities int
+			var totalPassengers int
+			var safetyRating float64
+			for _, accident := range accidents {
+				totalFatalities += accident.TotalFatalities
+				totalPassengers += accident.TotalPassengers
+			}
+			fatalRate := float64(totalFatalities) / float64(totalPassengers)
+			incidentRate := float64(len(accidents)) / float64(totalPassengers)
+			safetyRating = 5.0 - (fatalRate * 5.0) - (incidentRate * 5.0)
+			if err := db.Model(&airline).Update("rating", safetyRating).Error; err != nil {
+				log.Printf("failed to update safety rating for airline %s: %v", airline.Airline, err)
+			}
+			db.Model(&airline).Update("updated_at", time.Now())
+			db.Model(&airline).Update("number_of_accidents", len(accidents))
+			if safetyRating > 4.0 {
+				if err := db.Model(airline).Update("alert_level", "No safety issues").Error; err != nil {
+					log.Printf("failed to update alert level for airline %s: %v", airline.Airline, err)
+				}
+			}
+			if safetyRating <= 4.0 && safetyRating > 3.0 {
+				if err := db.Model(airline).Update("alert_level", "Minor safety issues").Error; err != nil {
+					log.Printf("failed to update alert level for airline %s: %v", airline.Airline, err)
+				}
+			}
+			if safetyRating <= 3.0 && safetyRating > 2.0 {
+				if err := db.Model(airline).Update("alert_level", "Moderate safety issues").Error; err != nil {
+					log.Printf("failed to update alert level for airline %s: %v", airline.Airline, err)
+				}
+			}
+			if safetyRating <= 2.0 && safetyRating > 1.0 {
+				if err := db.Model(airline).Update("alert_level", "Major safety issues").Error; err != nil {
+					log.Printf("failed to update alert level for airline %s: %v", airline.Airline, err)
+				}
+			}
+			if safetyRating <= 1.0 {
+				if err := db.Model(airline).Update("alert_level", "Critical safety issues").Error; err != nil {
+					log.Printf("failed to update alert level for airline %s: %v", airline.Airline, err)
+				}
+			}
 		}
-	} else if safetyRating > 1.0 {
-		if err := db.Model(airline).Update("alert_level", "Major safety issues").Error; err != nil {
-			return err
-		}
-	} else {
-		if err := db.Model(airline).Update("alert_level", "Critical safety issues").Error; err != nil {
-			return err
-		}
+		//lib.AddSafetyRatingsCounter()
 	}
-	return
 }
 
 func GetRecordFromAirlineAccidents(airlineID int) ([]Accident, error) {

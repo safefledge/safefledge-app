@@ -11,6 +11,7 @@ import (
 func init() {
 	gin.SetMode(gin.ReleaseMode)
 	database.ConnectPostgresDB()
+	go database.UpdateSafetyRatings()
 }
 
 func main() {

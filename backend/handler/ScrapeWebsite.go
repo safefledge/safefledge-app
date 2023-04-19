@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -12,6 +13,7 @@ import (
 func ScrapeWebsite(url string, page string) (*database.Accident, error) {
 	var accident database.Accident
 	newUrl := url + page
+	fmt.Print(newUrl)
 	c := colly.NewCollector()
 	if c == nil {
 		return &accident, nil

@@ -8,6 +8,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"safefledge.com/m/v2/database"
 	"safefledge.com/m/v2/handler"
 )
@@ -113,11 +114,15 @@ func SetupRouter() *gin.Engine {
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
-	store := cookie.NewStore([]byte("secret"))
+	viper.SetConfigFile("ENV")
+	viper.ReadInConfig()
+	viper.AutomaticEnv()
+	secret := viper.Get("SESSION_SECRET")
+	store := cookie.NewStore([]byte(secret.(string)))
 	store.Options(sessions.Options{
 		MaxAge: 86400 * 7,
 	})
-	r.Use(sessions.Sessions("mysession", store))
+	r.Use(sessions.Sessions("user-session", store))
 	r.GET("/", home)
 
 	//Data collection manually from aviation-safety.net

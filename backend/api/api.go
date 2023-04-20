@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"safefledge.com/m/v2/database"
 	"safefledge.com/m/v2/handler"
+	"safefledge.com/m/v2/lib"
 )
 
 func home(c *gin.Context) {
@@ -104,6 +105,25 @@ func createAirline(c *gin.Context) {
 	})
 }
 
+func sendEmail(c *gin.Context) {
+	email := &database.Email{}
+	err := c.ShouldBindJSON(email)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
+	err = handler.SendEmail(email)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Email sent",
+	})
+}
+
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
@@ -113,11 +133,12 @@ func SetupRouter() *gin.Engine {
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
-	store := cookie.NewStore([]byte("secret"))
+	secret := lib.GetEnvVariable("SESSION_SECRET")
+	store := cookie.NewStore([]byte(secret))
 	store.Options(sessions.Options{
 		MaxAge: 86400 * 7,
 	})
-	r.Use(sessions.Sessions("mysession", store))
+	r.Use(sessions.Sessions("user-session", store))
 	r.GET("/", home)
 
 	//Data collection manually from aviation-safety.net
@@ -125,6 +146,7 @@ func SetupRouter() *gin.Engine {
 	authGroup.GET("/scrape", scrapeWebSiteRequest)
 	authGroup.GET("/record/:id", getRecordFromAccidients)
 	authGroup.POST("/airline", createAirline)
+	authGroup.POST("/email", sendEmail)
 
 	return r
 }

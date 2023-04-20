@@ -68,6 +68,12 @@ type User struct {
 	UpdatedAt    time.Time `json:"updated_at"`
 }
 
+type Email struct {
+	To      string `json:"to"`
+	Subject string `json:"subject"`
+	Body    string `json:"body"`
+}
+
 func getEnvVariable(key string) string {
 	err := godotenv.Load()
 	if err != nil {

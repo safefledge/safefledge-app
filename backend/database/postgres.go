@@ -31,7 +31,7 @@ type SafetyRating struct {
 	AnnualInternationalFlights int           `json:"annual_international_flights"` //number of annual international flights
 	Accidents5yrs              int           `json:"accidents_5yrs"`               //number of accidents in the last 5 years
 	AccidentsFatalities5yrs    int           `json:"accidents_fatalities_5yrs"`    //number of fatalities in the last 5 years
-	Rating                     float64       `json:"rating" gorm:"default:5.0"`
+	Rating                     float64       `json:"rating" gorm:"default:5.0;check:rating >= 0"`
 	AlertLevel                 string        `json:"alert_level" gorm:"default:'No safety issues'"`
 	OpinionData                []OpinionData `json:"data" gorm:"many2many:airline_data;"`
 	Accidents                  []Accident    `json:"accidents" gorm:"many2many:accidents;"`
@@ -161,315 +161,109 @@ func NewUpdateSafetyRatings() {
 				continue
 			}
 			if len(accidents) == 0 {
-				var acfTotal = airline.TotalAircrafts
-				var avFleetAge = airline.AvFleetAge
-				var accidents_5y = airline.Accidents5yrs
-				if accidents_5y == 0 && avFleetAge <= 10 {
-					if err := db.Model(&airline).Update("safety_rating", "5.0").Error; err != nil {
-						log.Println("failed to update safety rating:", err)
+				for _, data := range airlines {
+					var opinionData []OpinionData
+					if err := db.Model(&OpinionData{}).Where("safety_rating_id = ?", data.ID).Find(&opinionData).Error; err != nil {
+						log.Println("failed to retrieve opinion data:", err)
 						continue
-					}
-					db.Model(&airline).Update("updated_at", time.Now())
-					if err := db.Model(airline).Update("alert_level", "No major accidents in the last 5 years").Error; err != nil {
-						log.Println("failed to update alert level:", err)
-						continue
-					}
-
-				}
-				var fatal_5y = airline.AccidentsFatalities5yrs
-				var fatal_5y_percent = float64(fatal_5y) / float64(accidents_5y)
-				var fatal_5y_percent_rounded = math.Round(fatal_5y_percent*100) / 100
-				if avFleetAge <= 5 {
-					var safetyRating = 5.0 - (float64(accidents_5y) * 0.5) - (float64(acfTotal) * 0.1) - (float64(avFleetAge) * 0.1) - (float64(fatal_5y_percent_rounded) * 0.3)
-					var safetyRatingRounded = math.Round(safetyRating*100) / 100
-
-					if err := db.Model(&airline).Update("rating", safetyRatingRounded).Error; err != nil {
-						log.Println("failed to update safety rating:", err)
-						continue
-					}
-					db.Model(&airline).Update("updated_at", time.Now())
-				} else if avFleetAge > 5 && avFleetAge <= 10 {
-					var safetyRating = 5.0 - (float64(accidents_5y) * 0.5) - (float64(fatal_5y_percent_rounded) * 0.3)
-					var safetyRatingRounded = math.Round(safetyRating*100) / 100
-					if err := db.Model(&airline).Update("rating", safetyRatingRounded).Error; err != nil {
-						log.Println("failed to update safety rating:", err)
-						continue
-					}
-					db.Model(&airline).Update("updated_at", time.Now())
-					if safetyRating > 4.5 {
-						if err := db.Model(airline).Update("alert_level", "No major safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 4.5 && safetyRating > 4.0 {
-						if err := db.Model(airline).Update("alert_level", "Minor safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 4.0 && safetyRating > 3.5 {
-						if err := db.Model(airline).Update("alert_level", "Moderate safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 3.5 && safetyRating > 3.0 {
-						if err := db.Model(airline).Update("alert_level", "Major safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 3.0 {
-						if err := db.Model(airline).Update("alert_level", "Critical safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-				} else if avFleetAge > 10 && avFleetAge <= 15 {
-					var safetyRating = 5.0 - (float64(accidents_5y) * 0.5) - (float64(avFleetAge) * 0.1) - (float64(fatal_5y_percent_rounded) * 0.3)
-					var safetyRatingRounded = math.Round(safetyRating*100) / 100
-					if err := db.Model(&airline).Update("rating", safetyRatingRounded).Error; err != nil {
-						log.Println("failed to update safety rating:", err)
-						continue
-					}
-					db.Model(&airline).Update("updated_at", time.Now())
-					if safetyRating > 4.5 {
-						if err := db.Model(airline).Update("alert_level", "No major safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 4.5 && safetyRating > 4.0 {
-						if err := db.Model(airline).Update("alert_level", "Minor safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 4.0 && safetyRating > 3.5 {
-						if err := db.Model(airline).Update("alert_level", "Moderate safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 3.5 && safetyRating > 3.0 {
-						if err := db.Model(airline).Update("alert_level", "Major safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 3.0 {
-						if err := db.Model(airline).Update("alert_level", "Critical safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-				} else if avFleetAge > 15 && avFleetAge <= 20 {
-					var safetyRating = 5.0 - (float64(accidents_5y) * 0.5) - (float64(avFleetAge) * 0.4) - (float64(fatal_5y_percent_rounded) * 0.3)
-					var safetyRatingRounded = math.Round(safetyRating*100) / 100
-					if err := db.Model(&airline).Update("rating", safetyRatingRounded).Error; err != nil {
-						log.Println("failed to update safety rating:", err)
-						continue
-					}
-					db.Model(&airline).Update("updated_at", time.Now())
-					if safetyRating > 4.5 {
-						if err := db.Model(airline).Update("alert_level", "No major safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 4.5 && safetyRating > 4.0 {
-						if err := db.Model(airline).Update("alert_level", "Minor safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 4.0 && safetyRating > 3.5 {
-						if err := db.Model(airline).Update("alert_level", "Moderate safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 3.5 && safetyRating > 3.0 {
-						if err := db.Model(airline).Update("alert_level", "Major safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 3.0 {
-						if err := db.Model(airline).Update("alert_level", "Critical safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-				} else if avFleetAge > 20 && avFleetAge <= 25 {
-					var safetyRating = 5.0 - (float64(accidents_5y) * 0.5) - (float64(acfTotal) * 0.1) - (float64(avFleetAge) * 0.5) - (float64(fatal_5y_percent_rounded) * 0.3)
-					var safetyRatingRounded = math.Round(safetyRating*100) / 100
-					if err := db.Model(&airline).Update("rating", safetyRatingRounded).Error; err != nil {
-						log.Println("failed to update safety rating:", err)
-						continue
-					}
-					db.Model(&airline).Update("updated_at", time.Now())
-					if safetyRating > 4.5 {
-						if err := db.Model(airline).Update("alert_level", "No major safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 4.5 && safetyRating > 4.0 {
-						if err := db.Model(airline).Update("alert_level", "Minor safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 4.0 && safetyRating > 3.5 {
-						if err := db.Model(airline).Update("alert_level", "Moderate safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 3.5 && safetyRating > 3.0 {
-						if err := db.Model(airline).Update("alert_level", "Major safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 3.0 {
-						if err := db.Model(airline).Update("alert_level", "Critical safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-				} else if avFleetAge > 25 && avFleetAge <= 30 {
-					var safetyRating = 5.0 - (float64(accidents_5y) * 0.5) - (float64(acfTotal) * 0.1) - (float64(avFleetAge) * 0.6) - (float64(fatal_5y_percent_rounded) * 0.3)
-					var safetyRatingRounded = math.Round(safetyRating*100) / 100
-					if err := db.Model(&airline).Update("rating", safetyRatingRounded).Error; err != nil {
-						log.Println("failed to update safety rating:", err)
-						continue
-					}
-					db.Model(&airline).Update("updated_at", time.Now())
-					if safetyRating > 4.5 {
-						if err := db.Model(airline).Update("alert_level", "No major safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 4.5 && safetyRating > 4.0 {
-						if err := db.Model(airline).Update("alert_level", "Minor safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 4.0 && safetyRating > 3.5 {
-						if err := db.Model(airline).Update("alert_level", "Moderate safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 3.5 && safetyRating > 3.0 {
-						if err := db.Model(airline).Update("alert_level", "Major safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 3.0 {
-						if err := db.Model(airline).Update("alert_level", "Critical safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-				} else if avFleetAge > 30 && avFleetAge <= 35 {
-					var safetyRating = 5.0 - (float64(accidents_5y) * 0.5) - (float64(acfTotal) * 0.1) - (float64(avFleetAge) * 0.7) - (float64(fatal_5y_percent_rounded) * 0.3)
-					var safetyRatingRounded = math.Round(safetyRating*100) / 100
-					if err := db.Model(&airline).Update("rating", safetyRatingRounded).Error; err != nil {
-						log.Println("failed to update safety rating:", err)
-						continue
-					}
-					db.Model(&airline).Update("updated_at", time.Now())
-					if safetyRating > 4.5 {
-						if err := db.Model(airline).Update("alert_level", "No major safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 4.5 && safetyRating > 4.0 {
-						if err := db.Model(airline).Update("alert_level", "Minor safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 4.0 && safetyRating > 3.5 {
-						if err := db.Model(airline).Update("alert_level", "Moderate safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 3.5 && safetyRating > 3.0 {
-						if err := db.Model(airline).Update("alert_level", "Major safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
-					}
-					if safetyRating <= 3.0 {
-						if err := db.Model(airline).Update("alert_level", "Critical safety concerns").Error; err != nil {
-							log.Println("failed to update alert level:", err)
-							continue
-						}
 					}
 				}
-			} else {
-				var totalFatalities int
-				var totalPassengers int
-				var safetyRating float64
-				var acfTotal = airline.TotalAircrafts
-				var avFleetAge = airline.AvFleetAge
-				var acfOver25 = airline.AircraftOver25
-				var acfOver25Percent = float64(acfOver25) / float64(acfTotal)
-				var acfOver25PercentRounded = math.Round(acfOver25Percent*100) / 100
-				var accidents_5y = airline.Accidents5yrs
-				var fatal_5y = airline.AccidentsFatalities5yrs
-				var fatal_5y_percent = float64(fatal_5y) / float64(accidents_5y)
-				var fatal_5y_percent_rounded = math.Round(fatal_5y_percent*100) / 100
+				var AvFleetAge = float64(airline.AvFleetAge)
+				var AircraftOver25 = float64(airline.AircraftOver25)
+				var TotalAircrafts = float64(airline.TotalAircrafts)
+				var Routes = float64(airline.Routes)
+				var AnnualFlights = float64(airline.AnnualFlights)
+				var Accidents5yrs = float64(airline.Accidents5yrs)
+				var AccidentsFatalities5yrs = float64(airline.AccidentsFatalities5yrs)
+				///Weights
+				var AvFleetAgeWeight = float64(0.4)
+				var AircraftOver25Weight = float64(0.1)
+				var TotalAircraftsWeight = float64(0.1)
+				var RoutesWeight = float64(0.1)
+				var AnnualFlightsWeight = float64(0.2)
+				var Accidents5yrsWeight = float64(0.05)
+				var AccidentsFatalities5yrsWeight = float64(0.1)
 
-				for _, accident := range accidents {
-					totalFatalities += accident.TotalFatalities
-					totalPassengers += accident.TotalPassengers
-				}
+				totalSafetyScore := (AvFleetAge * AvFleetAgeWeight) + (AircraftOver25 * AircraftOver25Weight) + (TotalAircrafts * TotalAircraftsWeight) + (Routes * RoutesWeight) + (AnnualFlights * AnnualFlightsWeight) + (Accidents5yrs * Accidents5yrsWeight) + (AccidentsFatalities5yrs * AccidentsFatalities5yrsWeight)
 
-				fatalRate := float64(totalFatalities) / float64(totalPassengers)
-				safetyRating = 5.0 - (fatalRate * 100) - (acfOver25PercentRounded * 2) - (avFleetAge * 0.5) - (fatal_5y_percent_rounded * 2)
-
-				if err := db.Model(&airline).Update("rating", safetyRating).Error; err != nil {
-					log.Println("failed to update safety rating:", err)
-					continue
-				}
+				var safetyRating = float64(totalSafetyScore) * 5
+				var safetyRatingRound = math.Round(safetyRating*100) / 100
 				db.Model(&airline).Update("updated_at", time.Now())
-				if safetyRating > 4.5 {
-					if err := db.Model(airline).Update("alert_level", "No safety concerns").Error; err != nil {
+				if safetyRatingRound <= 5 && safetyRatingRound >= 4.5 {
+					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+						log.Println("failed to update safety rating:", err)
+						continue
+					}
+
+				} else if safetyRatingRound <= 4.5 && safetyRatingRound >= 4 {
+					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+						log.Println("failed to update safety rating:", err)
+						continue
+					}
+					if err := db.Model(airline).Update("alert_level", "No major safety concerns").Error; err != nil {
 						log.Println("failed to update alert level:", err)
 						continue
 					}
-				}
-				if safetyRating <= 4.5 && safetyRating > 3.5 {
+				} else if safetyRatingRound <= 4 && safetyRatingRound >= 3.5 {
+					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+						log.Println("failed to update safety rating:", err)
+						continue
+					}
 					if err := db.Model(airline).Update("alert_level", "Minor safety concerns").Error; err != nil {
 						log.Println("failed to update alert level:", err)
 						continue
 					}
-				}
-				if safetyRating <= 3.5 && safetyRating > 2.5 {
-					if err := db.Model(airline).Update("alert_level", "Moderate safety concerns").Error; err != nil {
-						log.Println("failed to update alert level:", err)
+				} else if safetyRatingRound <= 3.5 && safetyRatingRound >= 3 {
+					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+						log.Println("failed to update safety rating:", err)
 						continue
 					}
-				}
-				if safetyRating <= 2.5 && safetyRating > 1.5 {
 					if err := db.Model(airline).Update("alert_level", "Major safety concerns").Error; err != nil {
 						log.Println("failed to update alert level:", err)
 						continue
 					}
-				}
-				if safetyRating <= 1.5 {
-					if err := db.Model(airline).Update("alert_level", "Severe safety concerns").Error; err != nil {
+				} else if safetyRatingRound <= 3 && safetyRatingRound >= 2.5 {
+					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+						log.Println("failed to update safety rating:", err)
+						continue
+					}
+					if err := db.Model(airline).Update("alert_level", "Major safety concerns").Error; err != nil {
+						log.Println("failed to update alert level:", err)
+						continue
+					}
+				} else if safetyRatingRound <= 2.5 && safetyRatingRound >= 2 {
+					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+						log.Println("failed to update safety rating:", err)
+						continue
+					}
+					if err := db.Model(airline).Update("alert_level", "Major safety concerns").Error; err != nil {
+						log.Println("failed to update alert level:", err)
+						continue
+					}
+				} else if safetyRatingRound <= 2 && safetyRatingRound >= 1.5 {
+					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+						log.Println("failed to update safety rating:", err)
+						continue
+					}
+					if err := db.Model(airline).Update("alert_level", "Major safety concerns").Error; err != nil {
+						log.Println("failed to update alert level:", err)
+						continue
+					}
+				} else if safetyRatingRound <= 1.5 && safetyRatingRound >= 1 {
+					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+						log.Println("failed to update safety rating:", err)
+						continue
+					}
+					if err := db.Model(airline).Update("alert_level", "Major safety concerns").Error; err != nil {
+						log.Println("failed to update alert level:", err)
+						continue
+					}
+				} else if safetyRatingRound <= 1 && safetyRatingRound >= 0.5 {
+					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+						log.Println("failed to update safety rating:", err)
+						continue
+					}
+					if err := db.Model(airline).Update("alert_level", "Major safety concerns").Error; err != nil {
 						log.Println("failed to update alert level:", err)
 						continue
 					}

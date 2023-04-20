@@ -10,6 +10,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/joho/godotenv"
+	databaselib "safefledge.com/m/v2/database/database_lib"
 )
 
 var db *gorm.DB
@@ -37,6 +38,14 @@ type SafetyRating struct {
 	Accidents                  []Accident    `json:"accidents" gorm:"many2many:accidents;"`
 	CreatedAt                  time.Time     `json:"created_at"`
 	UpdatedAt                  time.Time     `json:"updated_at"`
+}
+
+type Factor struct {
+	Name      string
+	Value     float64
+	Weight    float64
+	MaxValue  float64
+	Normalize bool
 }
 
 type OpinionData struct {
@@ -161,42 +170,40 @@ func NewUpdateSafetyRatings() {
 				continue
 			}
 			if len(accidents) == 0 {
-				for _, data := range airlines {
-					var opinionData []OpinionData
-					if err := db.Model(&OpinionData{}).Where("safety_rating_id = ?", data.ID).Find(&opinionData).Error; err != nil {
-						log.Println("failed to retrieve opinion data:", err)
-						continue
-					}
-				}
-				var AvFleetAge = float64(airline.AvFleetAge)
+				var AvFleetAge = airline.AvFleetAge
 				var AircraftOver25 = float64(airline.AircraftOver25)
 				var TotalAircrafts = float64(airline.TotalAircrafts)
 				var Routes = float64(airline.Routes)
 				var AnnualFlights = float64(airline.AnnualFlights)
 				var Accidents5yrs = float64(airline.Accidents5yrs)
 				var AccidentsFatalities5yrs = float64(airline.AccidentsFatalities5yrs)
-				///Weights
-				var AvFleetAgeWeight = float64(0.4)
-				var AircraftOver25Weight = float64(0.1)
-				var TotalAircraftsWeight = float64(0.1)
-				var RoutesWeight = float64(0.1)
-				var AnnualFlightsWeight = float64(0.2)
-				var Accidents5yrsWeight = float64(0.05)
-				var AccidentsFatalities5yrsWeight = float64(0.1)
 
-				totalSafetyScore := (AvFleetAge * AvFleetAgeWeight) + (AircraftOver25 * AircraftOver25Weight) + (TotalAircrafts * TotalAircraftsWeight) + (Routes * RoutesWeight) + (AnnualFlights * AnnualFlightsWeight) + (Accidents5yrs * Accidents5yrsWeight) + (AccidentsFatalities5yrs * AccidentsFatalities5yrsWeight)
-
-				var safetyRating = float64(totalSafetyScore) * 5
-				var safetyRatingRound = math.Round(safetyRating*100) / 100
-				db.Model(&airline).Update("updated_at", time.Now())
-				if safetyRatingRound <= 5 && safetyRatingRound >= 4.5 {
-					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
-						log.Println("failed to update safety rating:", err)
-						continue
+				var factors = []Factor{
+					{Name: "AvFleetAge", Value: AvFleetAge, Weight: 0.15, MaxValue: 40, Normalize: true},
+					{Name: "AircraftOver25", Value: AircraftOver25, Weight: 0.05, MaxValue: 40},
+					{Name: "TotalAircrafts", Value: TotalAircrafts, Weight: 0.05, MaxValue: 1000},
+					{Name: "Routes", Value: Routes, Weight: 0.1, MaxValue: 10000},
+					{Name: "AnnualFlights", Value: AnnualFlights, Weight: 0.15, MaxValue: 1000000},
+					{Name: "Accidents5yrs", Value: Accidents5yrs, Weight: 0.4, MaxValue: 30},
+					{Name: "AccidentsFatalities5yrs", Value: AccidentsFatalities5yrs, Weight: 0.1, MaxValue: 1000},
+				}
+				var safetyRating float64
+				for i := range factors {
+					if factors[i].Normalize {
+						factors[i].Value = factors[i].Value / factors[i].MaxValue
 					}
+				}
+				for _, f := range factors {
+					safetyRating += f.Value * f.Weight
+				}
 
-				} else if safetyRatingRound <= 4.5 && safetyRatingRound >= 4 {
-					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+				var ratingAfter = safetyRating * 5 / 4
+				var mainRating float64
+				safetyRatingRound := math.Round(ratingAfter*100) / 100
+				mainRating = databaselib.AssignMainRating(safetyRatingRound)
+				db.Model(&airline).Update("updated_at", time.Now())
+				if mainRating <= 5 && mainRating >= 4.5 {
+					if err := db.Model(&airline).Update("rating", mainRating).Error; err != nil {
 						log.Println("failed to update safety rating:", err)
 						continue
 					}
@@ -204,8 +211,18 @@ func NewUpdateSafetyRatings() {
 						log.Println("failed to update alert level:", err)
 						continue
 					}
-				} else if safetyRatingRound <= 4 && safetyRatingRound >= 3.5 {
-					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+
+				} else if mainRating <= 4.5 && mainRating >= 4 {
+					if err := db.Model(&airline).Update("rating", mainRating).Error; err != nil {
+						log.Println("failed to update safety rating:", err)
+						continue
+					}
+					if err := db.Model(airline).Update("alert_level", "No major safety concerns").Error; err != nil {
+						log.Println("failed to update alert level:", err)
+						continue
+					}
+				} else if mainRating <= 4 && mainRating >= 3.5 {
+					if err := db.Model(&airline).Update("rating", mainRating).Error; err != nil {
 						log.Println("failed to update safety rating:", err)
 						continue
 					}
@@ -213,8 +230,8 @@ func NewUpdateSafetyRatings() {
 						log.Println("failed to update alert level:", err)
 						continue
 					}
-				} else if safetyRatingRound <= 3.5 && safetyRatingRound >= 3 {
-					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+				} else if mainRating <= 3.5 && mainRating >= 3 {
+					if err := db.Model(&airline).Update("rating", mainRating).Error; err != nil {
 						log.Println("failed to update safety rating:", err)
 						continue
 					}
@@ -222,8 +239,8 @@ func NewUpdateSafetyRatings() {
 						log.Println("failed to update alert level:", err)
 						continue
 					}
-				} else if safetyRatingRound <= 3 && safetyRatingRound >= 2.5 {
-					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+				} else if mainRating <= 3 && mainRating >= 2.5 {
+					if err := db.Model(&airline).Update("rating", mainRating).Error; err != nil {
 						log.Println("failed to update safety rating:", err)
 						continue
 					}
@@ -231,8 +248,8 @@ func NewUpdateSafetyRatings() {
 						log.Println("failed to update alert level:", err)
 						continue
 					}
-				} else if safetyRatingRound <= 2.5 && safetyRatingRound >= 2 {
-					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+				} else if mainRating <= 2.5 && mainRating >= 2 {
+					if err := db.Model(&airline).Update("rating", mainRating).Error; err != nil {
 						log.Println("failed to update safety rating:", err)
 						continue
 					}
@@ -240,8 +257,8 @@ func NewUpdateSafetyRatings() {
 						log.Println("failed to update alert level:", err)
 						continue
 					}
-				} else if safetyRatingRound <= 2 && safetyRatingRound >= 1.5 {
-					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+				} else if mainRating <= 2 && mainRating >= 1.5 {
+					if err := db.Model(&airline).Update("rating", mainRating).Error; err != nil {
 						log.Println("failed to update safety rating:", err)
 						continue
 					}
@@ -249,8 +266,8 @@ func NewUpdateSafetyRatings() {
 						log.Println("failed to update alert level:", err)
 						continue
 					}
-				} else if safetyRatingRound <= 1.5 && safetyRatingRound >= 1 {
-					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+				} else if mainRating <= 1.5 && mainRating >= 1 {
+					if err := db.Model(&airline).Update("rating", mainRating).Error; err != nil {
 						log.Println("failed to update safety rating:", err)
 						continue
 					}
@@ -258,8 +275,8 @@ func NewUpdateSafetyRatings() {
 						log.Println("failed to update alert level:", err)
 						continue
 					}
-				} else if safetyRatingRound <= 1 && safetyRatingRound >= 0.5 {
-					if err := db.Model(&airline).Update("rating", safetyRatingRound).Error; err != nil {
+				} else if mainRating <= 1 && mainRating >= 0.5 {
+					if err := db.Model(&airline).Update("rating", mainRating).Error; err != nil {
 						log.Println("failed to update safety rating:", err)
 						continue
 					}

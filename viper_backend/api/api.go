@@ -8,14 +8,14 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"safefledge.com/m/v2/database"
 	"safefledge.com/m/v2/handler"
-	"safefledge.com/m/v2/lib"
 )
 
 func home(c *gin.Context) {
 	c.JSON(200, gin.H{
-		"message": "Hello World",
+		"message": "Safe Fledge API",
 	})
 }
 
@@ -105,25 +105,6 @@ func createAirline(c *gin.Context) {
 	})
 }
 
-func sendEmail(c *gin.Context) {
-	email := &database.Email{}
-	err := c.ShouldBindJSON(email)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
-	}
-	err = handler.SendEmail(email)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Email sent",
-	})
-}
-
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
@@ -133,8 +114,11 @@ func SetupRouter() *gin.Engine {
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
-	secret := lib.GetEnvVariable("SESSION_SECRET")
-	store := cookie.NewStore([]byte(secret))
+	viper.SetConfigFile("ENV")
+	viper.ReadInConfig()
+	viper.AutomaticEnv()
+	secret := viper.Get("SESSION_SECRET")
+	store := cookie.NewStore([]byte(secret.(string)))
 	store.Options(sessions.Options{
 		MaxAge: 86400 * 7,
 	})
@@ -142,11 +126,10 @@ func SetupRouter() *gin.Engine {
 	r.GET("/", home)
 
 	//Data collection manually from aviation-safety.net
-	authGroup := r.Group("/api/v2").Use(handler.NoAuthRequired())
+	authGroup := r.Group("/v2").Use(handler.AuthRequiredAdmin())
 	authGroup.GET("/scrape", scrapeWebSiteRequest)
 	authGroup.GET("/record/:id", getRecordFromAccidients)
 	authGroup.POST("/airline", createAirline)
-	authGroup.POST("/email", sendEmail)
 
 	return r
 }

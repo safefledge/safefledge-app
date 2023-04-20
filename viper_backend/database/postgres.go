@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"os"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 	databaselib "safefledge.com/m/v2/database/database_lib"
 )
 
@@ -32,20 +31,12 @@ type SafetyRating struct {
 	AnnualInternationalFlights int           `json:"annual_international_flights"` //number of annual international flights
 	Accidents5yrs              int           `json:"accidents_5yrs"`               //number of accidents in the last 5 years
 	AccidentsFatalities5yrs    int           `json:"accidents_fatalities_5yrs"`    //number of fatalities in the last 5 years
-	Rating                     float64       `json:"rating" gorm:"default:5.0;check:rating >= 0"`
+	Rating                     float64       `json:"rating" gorm:"default:5.0"`
 	AlertLevel                 string        `json:"alert_level" gorm:"default:'No safety issues'"`
 	OpinionData                []OpinionData `json:"data" gorm:"many2many:airline_data;"`
 	Accidents                  []Accident    `json:"accidents" gorm:"many2many:accidents;"`
 	CreatedAt                  time.Time     `json:"created_at"`
 	UpdatedAt                  time.Time     `json:"updated_at"`
-}
-
-type Factor struct {
-	Name      string
-	Value     float64
-	Weight    float64
-	MaxValue  float64
-	Normalize bool
 }
 
 type OpinionData struct {
@@ -77,27 +68,30 @@ type User struct {
 	UpdatedAt    time.Time `json:"updated_at"`
 }
 
+type Factor struct {
+	Name      string
+	Value     float64
+	Weight    float64
+	MaxValue  float64
+	Normalize bool
+}
+
 type Email struct {
 	To      string `json:"to"`
 	Subject string `json:"subject"`
 	Body    string `json:"body"`
 }
 
-func getEnvVariable(key string) string {
-	err := godotenv.Load()
-	if err != nil {
-		panic(err)
-	}
-	return os.Getenv(key)
-}
-
 func ConnectPostgresDB() {
+	viper.SetConfigFile("ENV")
+	viper.ReadInConfig()
+	viper.AutomaticEnv()
 	var (
-		host     = getEnvVariable("DB_HOST")
-		port     = getEnvVariable("DB_PORT")
-		user     = getEnvVariable("DB_USER")
-		password = getEnvVariable("DB_PASS")
-		dbname   = getEnvVariable("DB_NAME")
+		host     = viper.Get("DB_HOST")
+		port     = viper.Get("DB_PORT")
+		user     = viper.Get("DB_USER")
+		password = viper.Get("DB_PASS")
+		dbname   = viper.Get("DB_NAME")
 	)
 	connection := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=require", host, port, user, dbname, password)
 
@@ -154,7 +148,7 @@ func AddRecordToAirlineAccidents(airline *SafetyRating, data *Accident) (err err
 }
 
 func NewUpdateSafetyRatings() {
-	ticker := time.NewTicker(time.Minute)
+	ticker := time.NewTicker(time.Hour)
 	defer ticker.Stop()
 
 	for range ticker.C {

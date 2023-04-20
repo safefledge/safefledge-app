@@ -7,8 +7,6 @@ import { useLocale } from "next-intl";
 
 export default function Navbar() {
   const locale = useLocale();
-
-
   return (
     <nav className="navbar w-navbar-width h-navbar-height bg-navbar-color flex flex-col md:flex-row justify-between mt-5 ml-5">
       <div className="flex items-start">
@@ -20,16 +18,16 @@ export default function Navbar() {
         />
       </div>
       <div className="flex items-center gap-8">
-        <Link href="/" locale={locale}>
+        <Link className="text-base" href="/" locale={locale}>
           Tab 01
         </Link>
-        <Link href="/about" locale={locale}>
+        <Link className="text-base" href="/about" locale={locale}>
           Tab 02
         </Link>
-        <Link href="/contact" locale={locale}>
+        <Link className="text-base" href="/contact" locale={locale}>
           Tab 03
         </Link>
-        <Link href="/contact" locale={locale}>
+        <Link className="text-base" href="/contact" locale={locale}>
           Tab 04
         </Link>
       </div>

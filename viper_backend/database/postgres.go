@@ -149,7 +149,7 @@ func AddRecordToAirlineAccidents(airline *SafetyRating, data *Accident) (err err
 }
 
 func NewUpdateSafetyRatings() {
-	ticker := time.NewTicker(time.Minute)
+	ticker := time.NewTicker(time.Hour)
 	defer ticker.Stop()
 
 	for range ticker.C {

@@ -27,6 +27,9 @@ module.exports = {
       },
       fontFamily: {
         'auth-display': 'Montserrat, sans-serif',
+      },
+      borderWidth: {
+        '1': '1px',
       }
     },
   },

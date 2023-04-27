@@ -18,9 +18,7 @@ export default async function AuthLayout({
 }: Props) {
     return (
         <section>
-            <main className='font-auth-display'>
-                {children}
-            </main>
+            {children}
         </section>
     )
 }

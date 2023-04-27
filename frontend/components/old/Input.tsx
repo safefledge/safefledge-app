@@ -1,5 +1,5 @@
 
-import { InputProps } from "@/interface/interfaces"
+import { InputProps } from "@/addons/interface/interfaces"
 
 export default function Input({
     type,

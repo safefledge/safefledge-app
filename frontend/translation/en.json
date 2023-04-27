@@ -41,14 +41,19 @@
       "Login": "Login to your account",
       "Register": "Create an account",
       "Fullname": "Full Name",
-      "Terms&Conditions": "By signing up, you confirm that you've read and accepted our User Notice and Privacy Policy.",
+      "Terms&Conditions": "By signing up, you confirm that you've read and accepted our",
+      "Terms&Conditions2": "By loging in, you confirm that you've read and accepted our",
+      "UserNotice": "User Notice",
+      "PrivacyPolicy": "Privacy Policy",
+      "And": "and",
       "Already_have_an_account": "Already have an account?",
       "Log_in_Allready": "Log in",
       "No_account": "New Member?",
       "Register_Allready": "Create an account",
       "RegistrBtn": "Register",
       "SigninBtn": "Sign in",
-      "Or": "Or",
+      "Password": "Password",
+      "Or": "OR",
       "Continue with Google": "Continue with Google"
     }
 }

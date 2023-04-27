@@ -1,10 +1,9 @@
 "use client";
-import "./auth.css";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { validationSchema } from "@/addons/schemas/ValidationSchema";
-import { ValidationSchemaInterface } from "@/addons/interface/interfaces";
+import { validationSchemaLogin } from "@/addons/schemas/ValidationSchemaLogin";
+import { ValidationSchemaLogin } from "@/addons/interface/interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import zxcvbn from "zxcvbn";
@@ -18,10 +17,10 @@ export default function Page() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ValidationSchemaInterface>({
-    resolver: zodResolver(validationSchema),
+  } = useForm<ValidationSchemaLogin>({
+    resolver: zodResolver(validationSchemaLogin),
   });
-  const onSubmit: SubmitHandler<ValidationSchemaInterface> = (data) => {
+  const onSubmit: SubmitHandler<ValidationSchemaLogin> = (data) => {
     console.log(data);
   };
   //states
@@ -66,11 +65,11 @@ export default function Page() {
           height={200}
         />
         <form
-          className="w-[424px] h-[515px] rounded-[20px] bg-white flex flex-col items-center"
+          className="w-[424px] h-[450px] rounded-[20px] bg-white flex flex-col items-center"
           onSubmit={handleSubmit(onSubmit)}
         >
           <h1 className="text-black text-[24px] leading-7 mt-8 font-bold">
-            {auth_translations("Register")}
+            {auth_translations("Login")}
           </h1>
           <div className="flex flex-col justify-center items-center gap-[16px] mt-6">
             <input
@@ -82,16 +81,6 @@ export default function Page() {
             {errors.email && (
               <span className="text-red-500 text-sm">
                 {errors.email?.message}
-              </span>
-            )}
-            <input
-              className="w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
-              placeholder={auth_translations("Fullname")}
-              {...register("fullname")}
-            />
-            {errors.fullname && (
-              <span className="text-red-500 text-sm">
-                {errors.fullname?.message}
               </span>
             )}
             <div className="relative w-[376px]">
@@ -140,7 +129,7 @@ export default function Page() {
           </div>
           <div className="flex w-[320px]">
             <span className="text-[12px] text-[#92929D] text-center">
-                {auth_translations("Terms&Conditions")}{" "}<Link className=" text-[#0072C6]" href="/user/notice" locale={locale}>
+                {auth_translations("Terms&Conditions2")}{" "}<Link className=" text-[#0072C6]" href="/user/notice" locale={locale}>
                     {auth_translations("UserNotice")}{" "}
                 </Link>
                 {auth_translations("And")}{" "}
@@ -150,7 +139,7 @@ export default function Page() {
             </span>
           </div>
           <button className="w-[376px] h-[38px] bg-[#0072C6] rounded-[10px] text-white text-[16px] font-bold mt-6">
-            {auth_translations("RegistrBtn")}
+            {auth_translations("SigninBtn")}
           </button>
           <span className="text-[12px] text-[#92929D] text-center mt-2">
             {auth_translations("Or")}{" "}
@@ -158,9 +147,9 @@ export default function Page() {
           <GoogleButton />
           <div className="w-[424px] h-[45px] rounded-br-[20px] rounded-bl-[20px] bg-[#0072C6] relative top-[20px] flex justify-center">
             <span className="text-[16px] text-white text-center my-auto">
-                {auth_translations("Already_have_an_account")}{" "}
-                <Link className="ml-[3px] text-[#F8F8F8]" href="/auth/login" locale={locale}>
-                    {auth_translations("Log_in_Allready")}
+                {auth_translations("No_account")}{" "}
+                <Link className="ml-[3px] text-[#F8F8F8]" href="/auth" locale={locale}>
+                    {auth_translations("Register_Allready")}
                 </Link>
             </span>
           </div>

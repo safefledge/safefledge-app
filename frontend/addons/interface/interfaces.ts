@@ -17,3 +17,15 @@ export interface InputDateProps {
     className: string;
 }
 
+
+export type ValidationSchemaInterface = {
+    email: string;
+    password: string;
+    fullname: string;
+}
+
+export type ValidationSchemaLogin = {
+    email: string;
+    password: string;
+}
+

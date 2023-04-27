@@ -39,6 +39,7 @@
 
     },
     "Auth": {
+      "Title": "Co chcesz zrobić?",
       "Login": "Zaloguj się",
       "Register": "Stwórz konto",
       "Fullname": "Imię i nazwisko",

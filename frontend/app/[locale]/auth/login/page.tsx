@@ -65,7 +65,7 @@ export default function Page() {
           height={200}
         />
         <form
-          className="w-[424px] h-[450px] rounded-[20px] bg-white flex flex-col items-center"
+          className="w-[424px] h-[420px] rounded-[20px] bg-white flex flex-col items-center"
           onSubmit={handleSubmit(onSubmit)}
         >
           <h1 className="text-black text-[24px] leading-7 mt-8 font-bold">
@@ -120,12 +120,7 @@ export default function Page() {
                 {errors.password?.message}
               </span>
             )}
-            <div className="flex justify-center items-center w-full">
-              <div className="h-2 w-full bg-gray-300 rounded-full overflow-hidden">
-                <div className={`h-full ${passwordStrength === 0 ? "bg-gray-300" : passwordStrength === 1 ? "bg-red-500" : passwordStrength === 2 ? "bg-yellow-500" : passwordStrength >= 3 ? "bg-green-500" : "bg-blue-500"} transition-all duration-500 ease-in-out`} style={{width: `${passwordStrength * 25}%`}}></div>
-              </div>
-              <span className="text-gray-400 text-sm ml-2">{passwordStrengthText}</span>
-            </div>
+            
           </div>
           <div className="flex w-[320px]">
             <span className="text-[12px] text-[#92929D] text-center">

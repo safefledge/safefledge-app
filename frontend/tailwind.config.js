@@ -24,6 +24,9 @@ module.exports = {
       },
       margin: {
         'popup': '550px'
+      },
+      fontFamily: {
+        'auth-display': 'Montserrat, sans-serif',
       }
     },
   },

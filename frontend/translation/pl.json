@@ -37,5 +37,19 @@
             "Passengers_Infant_plural2": "Niemowląt",
             "Passengers_Teen_plural2": "Młodzieży"
 
+    },
+    "Auth": {
+      "Login": "Zaloguj się",
+      "Register": "Stwórz konto",
+      "Fullname": "Imię i nazwisko",
+      "Terms&Conditions": "Rejestrując się akceptujesz nasze warunki korzystania z serwisu.",
+      "Already_have_an_account": "Masz już konto?",
+      "Log_in_Allready": "Zaloguj się",
+      "No_account": "Nie masz jeszcze konta?",
+      "Register_Allready": "Zarejestruj się",
+      "RegistrBtn": "Zarejestruj się",
+      "SigninBtn": "Zaloguj się",
+      "Or": "lub",
+      "Continue with Google": "Kontynuuj z Google"
     }
 }

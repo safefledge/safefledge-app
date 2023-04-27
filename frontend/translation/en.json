@@ -35,5 +35,20 @@
             "Passengers_Child_plural2": "Dzieci",
             "Passengers_Infant_plural2": "Niemowląt",
             "Passengers_Teen_plural2": "Młodzieży"
+    },
+    "Auth": {
+      "Title": "What you want to do?",
+      "Login": "Login to your account",
+      "Register": "Create an account",
+      "Fullname": "Full Name",
+      "Terms&Conditions": "By signing up, you confirm that you've read and accepted our User Notice and Privacy Policy.",
+      "Already_have_an_account": "Already have an account?",
+      "Log_in_Allready": "Log in",
+      "No_account": "New Member?",
+      "Register_Allready": "Create an account",
+      "RegistrBtn": "Register",
+      "SigninBtn": "Sign in",
+      "Or": "Or",
+      "Continue with Google": "Continue with Google"
     }
 }

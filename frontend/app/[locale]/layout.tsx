@@ -8,7 +8,7 @@ import Navbar from '@/components/Navbar';
 
 export const metadata = {
   title: 'SafeFledge',
-  description: 'For sake ',
+  description: 'For sake of better air travel!',
 }
 
 type Props = {
@@ -56,7 +56,6 @@ export default async function LocaleLayout({
       }}
       >
       <section>
-        <Navbar/>
         <main>
           {children}
           </main>

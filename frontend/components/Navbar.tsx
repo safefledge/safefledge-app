@@ -1,75 +1,47 @@
 "use client";
-import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "@/components/Link";
+import Link from "./Link";
+import { useLocale } from "next-intl";
+
+
 
 export default function Navbar() {
   const locale = useLocale();
-  const t = useTranslations("Home");
   return (
-    <nav className="bg-transparent relative bottom-20">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between">
-          <div className="flex">
-            <Link
-              className="relative lg:right-36 transition-all duration-300 ease-in-out"
-              href="/"
-              locale={locale}
-            >
-              <Image
-                src="/images/logo.png"
-                width={283}
-                height={283}
-                alt="logo"
-                className=" hover:scale-110 transition-all duration-300 ease-in-out"
-              />
-            </Link>
-          </div>
-          <div className="hidden sm:flex items-center gap-14 text-white font-medium">
-            <Link
-              className="hover:border-b-4 transition-all duration-75 ease-in rounded-sm"
-              href="/"
-              locale={locale}
-            >
-              {t("Navbar_1")}
-            </Link>
-            <Link
-              className="hover:border-b-4 transition-all duration-75 ease-in rounded-sm"
-              href="/services"
-              locale={locale}
-            >
-              {t("Navbar_2")}
-            </Link>
-            <Link
-              className="hover:border-b-4 transition-all duration-75 ease-in rounded-sm"
-              href="/resources"
-              locale={locale}
-            >
-              {t("Navbar_3")}
-            </Link>
-            <Link
-              className="hover:border-b-4 transition-all duration-75 ease-in rounded-sm"
-              href="/blog"
-              locale={locale}
-            >
-              {t("Navbar_4")}
-            </Link>
-            <Link
-              className="bg-blue-500 text-white px-4 py-2 rounded-large hover:bg-blue-600 transition-all duration-75 ease-in"
-              href="/contact"
-              locale={locale}
-            >
-              {t("Navbar_5")}
-            </Link>
-          </div>
-          <div className="flex sm:hidden items-center gap-8 text-white font-medium">
-            <button className="focus:outline-none mr-16 hover:scale-110 transition-all duration-300 ease-in-out">
-              <svg className="h-8 w-8 fill-current" viewBox="0 0 24 24">
-                <path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z" />
-              </svg>
-            </button>
-          </div>
-        </div>
+    <nav className="navbar w-navbar-width h-navbar-height bg-navbar-color flex flex-col md:flex-row justify-between mt-5 ml-5">
+      <div className="flex items-start">
+        <Image
+          src="/images/safefledgelogoLight.svg"
+          alt="SafeFledge Logo"
+          width={126}
+          height={35}
+        />
+      </div>
+      <div className="flex items-center gap-8">
+        <Link className="text-base" href="/" locale={locale}>
+          Tab 01
+        </Link>
+        <Link className="text-base" href="/about" locale={locale}>
+          Tab 02
+        </Link>
+        <Link className="text-base" href="/contact" locale={locale}>
+          Tab 03
+        </Link>
+        <Link className="text-base" href="/contact" locale={locale}>
+          Tab 04
+        </Link>
+      </div>
+      <div className="flex items-end gap-2 mr-0 md:mr-2">
+        <button className="bg-white w-[90px] h-[30px] rounded-[17px] border border-[#0B2BF8] md:w-[126px]">
+          <Link className="text-[#0B2BF8]" href="/login" locale={locale}>
+            CTA - 01
+          </Link>
+        </button>
+        <button className="bg-[#0B2BF8] w-[90px] h-[30px] rounded-[17px] border border-[#0B2BF8] md:w-[126px]">
+          <Link className="text-white" href="/login" locale={locale}>
+            CTA - 02
+          </Link>
+        </button>
       </div>
     </nav>
   );

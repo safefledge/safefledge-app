@@ -3,11 +3,12 @@ import {notFound} from 'next/navigation';
 import {ReactNode} from 'react';
 import './globals.css'
 import 'react-datepicker/dist/react-datepicker.css';
+import Navbar from '@/components/Navbar';
 
 
 export const metadata = {
-  title: 'SkyGuardian',
-  description: 'Find Safe Airlines and Airports',
+  title: 'SafeFledge',
+  description: 'For sake ',
 }
 
 type Props = {
@@ -55,7 +56,10 @@ export default async function LocaleLayout({
       }}
       >
       <section>
-        <main>{children}</main>
+        <Navbar/>
+        <main>
+          {children}
+          </main>
       </section>
     </NextIntlClientProvider>
   )

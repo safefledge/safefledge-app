@@ -8,7 +8,7 @@ import {
   FaPlaneArrival,
   FaUserFriends,
 } from "react-icons/fa";
-import Link from "./Link";
+import Link from "../Link";
 import DatePicker from 'react-datepicker';
 import './css/DatePickerCustom.css'
 import Dropdown from "./Dropdown";

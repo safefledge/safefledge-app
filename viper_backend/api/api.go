@@ -161,13 +161,14 @@ func loginUser(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"message": "User already logged in",
 			})
+		} else {
+			mc.Set(&memcache.Item{Key: "user", Value: []byte(db.Email), Expiration: 3600})
+			mc.Set(&memcache.Item{Key: "subscription", Value: []byte(db.Subscription), Expiration: 3600})
+			c.JSON(http.StatusOK, gin.H{
+				"message": "User logged in",
+				"data":    db,
+			})
 		}
-		mc.Set(&memcache.Item{Key: "user", Value: []byte(db.Email), Expiration: 3600})
-		mc.Set(&memcache.Item{Key: "subscription", Value: []byte(db.Subscription), Expiration: 3600})
-		c.JSON(http.StatusOK, gin.H{
-			"message": "User logged in",
-			"data":    db,
-		})
 	}
 }
 

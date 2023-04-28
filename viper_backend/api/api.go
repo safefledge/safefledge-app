@@ -4,14 +4,19 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"safefledge.com/m/v2/database"
 	"safefledge.com/m/v2/handler"
 )
+
+var mc *memcache.Client
+
+func init() {
+	mc = memcache.New("localhost:11211")
+}
 
 func home(c *gin.Context) {
 	c.JSON(200, gin.H{
@@ -140,11 +145,25 @@ func loginUser(c *gin.Context) {
 			"message": err.Error(),
 		})
 	} else {
-		session := sessions.Default(c)
-		session.Set("user", db)
-		session.Set("loggedIn", true)
-		session.Set("subscribtion", db.Subscription)
-		session.Save()
+		user, err := mc.Get("user")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": err.Error(),
+			})
+		}
+		subscription, err := mc.Get("subscription")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": err.Error(),
+			})
+		}
+		if string(user.Value) == db.Email && string(subscription.Value) == db.Subscription {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "User already logged in",
+			})
+		}
+		mc.Set(&memcache.Item{Key: "user", Value: []byte(db.Email), Expiration: 3600})
+		mc.Set(&memcache.Item{Key: "subscription", Value: []byte(db.Subscription), Expiration: 3600})
 		c.JSON(http.StatusOK, gin.H{
 			"message": "User logged in",
 			"data":    db,
@@ -164,12 +183,7 @@ func SetupRouter() *gin.Engine {
 	viper.SetConfigFile("ENV")
 	viper.ReadInConfig()
 	viper.AutomaticEnv()
-	secret := viper.Get("SESSION_SECRET")
-	store := cookie.NewStore([]byte(secret.(string)))
-	store.Options(sessions.Options{
-		MaxAge: 86400 * 7,
-	})
-	r.Use(sessions.Sessions("user-session", store))
+
 	r.GET("/", home)
 
 	//Data collection manually from aviation-safety.net

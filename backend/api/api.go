@@ -124,6 +124,53 @@ func sendEmail(c *gin.Context) {
 	})
 }
 
+func createUser(c *gin.Context) {
+	var user database.User
+	err := c.BindJSON(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
+	db, err := database.CreateUser(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "User created",
+			"data":    db,
+		})
+	}
+}
+
+func loginUser(c *gin.Context) {
+	var user database.User
+	err := c.BindJSON(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
+	db, err := database.LoginUser(user.Email, user.Password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	} else {
+		session := sessions.Default(c)
+		session.Set("user", db)
+		session.Set("loggedIn", true)
+		session.Set("subscribtion", db.Subscription)
+		session.Save()
+		c.JSON(http.StatusOK, gin.H{
+			"message": "User logged in",
+			"data":    db,
+		})
+	}
+}
+
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
@@ -147,6 +194,10 @@ func SetupRouter() *gin.Engine {
 	authGroup.GET("/record/:id", getRecordFromAccidients)
 	authGroup.POST("/airline", createAirline)
 	authGroup.POST("/email", sendEmail)
+
+	//User authentication
+	authGroup.POST("/user", createUser)
+	authGroup.POST("/login", loginUser)
 
 	return r
 }

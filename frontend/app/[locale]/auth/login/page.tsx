@@ -31,29 +31,6 @@ export default function Page() {
 
 
   ///functions
-  const calculatePasswordStrength = (password: string) => {
-    const result = zxcvbn(password);
-    setPasswordStrength(result.score);
-    switch (result.score) {
-        case 0:
-            setPasswordStrengthText("Weak");
-            break;
-        case 1:
-            setPasswordStrengthText("Weak");
-            break;
-        case 2:
-            setPasswordStrengthText("Medium");
-            break;
-        case 3:
-            setPasswordStrengthText("Strong");
-            break;
-        case 4:
-            setPasswordStrengthText("Strong");
-            break;
-        default:
-            setPasswordStrengthText("None");
-    }
-  }
 
   return (
     <div className="from-[#56CCF2] justify-center items-center flex flex-col h-screen">
@@ -89,9 +66,6 @@ export default function Page() {
                 type={isUserSeePassword ? "text" : "password"}
                 placeholder={auth_translations("Password")}
                 {...register("password")}
-                onChange={(e) => {
-                    calculatePasswordStrength(e.target.value);
-                }}
               />
               <span
                 className="absolute inset-y-0 right-0 flex items-center pr-2"

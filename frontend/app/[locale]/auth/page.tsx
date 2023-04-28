@@ -7,9 +7,9 @@ import { validationSchema } from "@/addons/schemas/ValidationSchema";
 import { ValidationSchemaInterface } from "@/addons/interface/interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import zxcvbn from "zxcvbn";
 import Link from "@/components/Link";
 import GoogleButton from "@/components/GoogleButton";
+import { calculatePasswordStrength } from "@/addons/functions/calculatePasswordStrength";
 
 export default function Page() {
   const locale = useLocale();
@@ -32,28 +32,13 @@ export default function Page() {
 
 
   ///functions
-  const calculatePasswordStrength = (password: string) => {
-    const result = zxcvbn(password);
-    setPasswordStrength(result.score);
-    switch (result.score) {
-        case 0:
-            setPasswordStrengthText("Weak");
-            break;
-        case 1:
-            setPasswordStrengthText("Weak");
-            break;
-        case 2:
-            setPasswordStrengthText("Medium");
-            break;
-        case 3:
-            setPasswordStrengthText("Strong");
-            break;
-        case 4:
-            setPasswordStrengthText("Strong");
-            break;
-        default:
-            setPasswordStrengthText("None");
+  const handlePasswordStrength = (e: any) => {
+    const {score, passwordStrengthText} = calculatePasswordStrength(e.target.value);
+    if (score && passwordStrengthText) {
+      setPasswordStrength(score);
+      setPasswordStrengthText(passwordStrengthText);
     }
+    
   }
 
   return (
@@ -101,7 +86,7 @@ export default function Page() {
                 placeholder={auth_translations("Password")}
                 {...register("password")}
                 onChange={(e) => {
-                    calculatePasswordStrength(e.target.value);
+                    handlePasswordStrength(e);
                 }}
               />
               <span

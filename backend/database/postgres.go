@@ -1,11 +1,14 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"math"
 	"os"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -69,10 +72,11 @@ type Accident struct {
 type User struct {
 	ID           uint      `gorm:"primary_key"`
 	Email        string    `gorm:"unique" json:"email"`
-	Username     string    `gorm:"unique" json:"username"`
+	Username     string    `json:"username"`
+	Password     string    `json:"password"`
 	FirstName    string    `json:"first_name"`
 	LastName     string    `json:"last_name"`
-	Subscription string    `json:"subscription"`
+	Subscription string    `json:"subscription" gorm:"default:'free'"` //free, premium, admin
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 }
@@ -324,4 +328,82 @@ func GetRecordFromAirlineOpinionData(airlineID int) ([]OpinionData, error) {
 			return opinions, nil
 		}
 	}
+}
+
+func CreateUser(user *User) (*User, error) {
+	var existingUser User
+	result := db.Where("email = ?", user.Email).First(&existingUser)
+	if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, fmt.Errorf("user with email %s already exists", user.Email)
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+	user.Password = string(hashedPassword)
+	result = db.Create(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return user, nil
+}
+
+func GetUserByEmail(email string) (*User, error) {
+	var user User
+	result := db.Where("email = ?", email).First(&user)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, fmt.Errorf("user with email %s does not exist", email)
+	}
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &user, nil
+}
+
+func GetUserByID(id int) (*User, error) {
+	var user User
+	result := db.Where("id = ?", id).First(&user)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, fmt.Errorf("user with id %d does not exist", id)
+	}
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &user, nil
+}
+
+func UpdateUser(user *User) (*User, error) {
+	result := db.Save(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return user, nil
+}
+
+func DeleteUser(user *User) error {
+	result := db.Delete(&user)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
+func LoginUser(email string, password string) (*User, error) {
+	user, err := GetUserByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return nil, fmt.Errorf("invalid password")
+	}
+
+	return user, nil
 }

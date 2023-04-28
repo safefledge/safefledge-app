@@ -165,7 +165,7 @@ func SetupRouter() *gin.Engine {
 	secret := viper.GetString("SESSION_SECRET")
 	redisurl := viper.GetString("REDIS_URL")
 	store, _ := redis.NewStore(10, "tcp", redisurl, "", []byte(secret))
-	r.Use(sessions.Sessions("user-session", store))
+	r.Use(sessions.Sessions("usersession", store))
 
 	r.GET("/", home)
 

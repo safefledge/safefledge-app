@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/redis"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"safefledge.com/m/v2/database"
@@ -160,8 +160,7 @@ func SetupRouter() *gin.Engine {
 	viper.ReadInConfig()
 	viper.AutomaticEnv()
 	secret := viper.GetString("SESSION_SECRET")
-	redisurl := viper.GetString("REDIS_URL")
-	store, _ := redis.NewStore(10, "tcp", redisurl, "", []byte(secret))
+	store := cookie.NewStore([]byte(secret))
 	r.Use(sessions.Sessions("usersession", store))
 
 	r.GET("/", home)

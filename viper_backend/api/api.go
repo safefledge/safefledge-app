@@ -15,7 +15,11 @@ import (
 var mc *memcache.Client
 
 func init() {
-	mc = memcache.New("localhost:11211")
+	viper.SetConfigFile("ENV")
+	viper.ReadInConfig()
+	viper.AutomaticEnv()
+	port := viper.Get("PORT")
+	mc = memcache.New(":" + port.(string))
 }
 
 func home(c *gin.Context) {

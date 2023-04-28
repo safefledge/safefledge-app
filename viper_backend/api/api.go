@@ -164,6 +164,7 @@ func SetupRouter() *gin.Engine {
 	store.Options(sessions.Options{
 		MaxAge:   60 * 60 * 24 * 7,
 		HttpOnly: true,
+		Secure:   true,
 		Path:     "/", //Cookie path
 	})
 	r.Use(sessions.Sessions("usersession", store))

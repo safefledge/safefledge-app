@@ -58,6 +58,7 @@
     },
     "App": {
       "Home": "Home",
-      "Welcome": "Welcome"
+      "Welcome": "Welcome",
+      "Please login": "Please login to continue"
     }
 }

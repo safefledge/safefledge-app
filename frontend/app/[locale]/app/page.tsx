@@ -22,5 +22,11 @@ export default function Page(){
                 <h1 className="text-2xl font-bold">{auth_translations("Welcome")}</h1>
             </div>
         )
+    } else if (session === false){
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <h1 className="text-2xl font-bold">{auth_translations("Please login")}</h1>
+            </div>
+        )
     }
 }

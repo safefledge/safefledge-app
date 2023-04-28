@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -141,10 +140,6 @@ func loginUser(c *gin.Context) {
 			"message": err.Error(),
 		})
 	} else {
-		session := sessions.Default(c)
-		fmt.Print(session)
-		session.Set("loggedIn", "true")
-		session.Save()
 		c.JSON(http.StatusOK, gin.H{
 			"message": "User logged in",
 			"data":    db,
@@ -164,12 +159,21 @@ func SetupRouter() *gin.Engine {
 	viper.SetConfigFile("ENV")
 	viper.ReadInConfig()
 	viper.AutomaticEnv()
-	//secret := viper.GetString("SESSION_SECRET")
+	secret := viper.GetString("SESSION_SECRET")
 	redisurl := viper.GetString("REDIS_URL")
-	store, _ := redis.NewStore(10, "tcp", redisurl, "", []byte("secret"))
+	store, _ := redis.NewStore(10, "tcp", redisurl, "", []byte(secret))
 	r.Use(sessions.Sessions("usersession", store))
 
 	r.GET("/", home)
+
+	r.GET("/v2/redistest", func(c *gin.Context) {
+		session := sessions.Default(c)
+		session.Set("key", "value")
+		session.Save()
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Redis test",
+		})
+	})
 
 	//Data collection manually from aviation-safety.net
 	authGroup := r.Group("/v2").Use(handler.AuthRequiredAdmin())

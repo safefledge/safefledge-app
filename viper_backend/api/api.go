@@ -167,6 +167,7 @@ func SetupRouter() *gin.Engine {
 		Secure:   true,
 		Path:     "/", //Cookie path
 		Domain:   "safefledge.com",
+		SameSite: http.SameSiteStrictMode,
 	})
 	r.Use(sessions.Sessions("usersession", store))
 

@@ -141,12 +141,11 @@ func loginUser(c *gin.Context) {
 		})
 	} else {
 		session := sessions.Default(c)
-		session.Set("user", db)
-		session.Set("subscription", db.Subscription)
 		session.Set("loggedIn", "true")
 		session.Save()
 		c.JSON(http.StatusOK, gin.H{
 			"message": "User logged in",
+			"data":    db,
 		})
 	}
 }

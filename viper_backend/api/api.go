@@ -161,6 +161,11 @@ func SetupRouter() *gin.Engine {
 	viper.AutomaticEnv()
 	secret := viper.GetString("SESSION_SECRET")
 	store := cookie.NewStore([]byte(secret))
+	store.Options(sessions.Options{
+		MaxAge:   60 * 60 * 24 * 7,
+		HttpOnly: true,
+		Path:     "/", //Cookie path
+	})
 	r.Use(sessions.Sessions("usersession", store))
 
 	r.GET("/", home)

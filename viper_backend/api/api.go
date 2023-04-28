@@ -170,7 +170,7 @@ func SetupRouter() *gin.Engine {
 		HttpOnly: true,
 		Secure:   true,
 		Path:     "/", //Cookie path
-		Domain:   "safefledge.com",
+		Domain:   "*", //Cookie domain
 		SameSite: http.SameSiteStrictMode,
 	})
 	r.Use(sessions.Sessions("usersession", store))
@@ -187,6 +187,7 @@ func SetupRouter() *gin.Engine {
 	authGroupUser := r.Group("/v2")
 	authGroupUser.POST("/register", createUser)
 	authGroupUser.POST("/login", loginUser)
+	authGroupUser.GET("/session/check", handler.SessionCheck())
 
 	return r
 }

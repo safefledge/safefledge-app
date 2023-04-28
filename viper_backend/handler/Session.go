@@ -7,27 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AuthRequired() gin.HandlerFunc {
+func SessionCheck() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		user := session.Get("user")
 		if user == nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Unauthorized",
-			})
-			c.Abort()
-		} else {
-			c.Next()
-		}
-
-	}
-}
-
-func AuthRequiredAdmin() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		session := sessions.Default(c)
-		sub := session.Get("sub")
-		if sub == nil || sub != "admin" {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Unauthorized",
 			})

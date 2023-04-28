@@ -55,5 +55,9 @@
       "Password": "Password",
       "Or": "OR",
       "Continue with Google": "Continue with Google"
+    },
+    "App": {
+      "Home": "Home",
+      "Welcome": "Welcome"
     }
 }

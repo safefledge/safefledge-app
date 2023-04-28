@@ -5,17 +5,14 @@ import (
 	"strconv"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"safefledge.com/m/v2/database"
 	"safefledge.com/m/v2/handler"
-	"safefledge.com/m/v2/lib"
 )
 
 func home(c *gin.Context) {
 	c.JSON(200, gin.H{
-		"message": "Hello World",
+		"message": "Safe Fledge API",
 	})
 }
 
@@ -105,25 +102,6 @@ func createAirline(c *gin.Context) {
 	})
 }
 
-func sendEmail(c *gin.Context) {
-	email := &database.Email{}
-	err := c.ShouldBindJSON(email)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
-	}
-	err = handler.SendEmail(email)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": err.Error(),
-		})
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Email sent",
-	})
-}
-
 func createUser(c *gin.Context) {
 	var user database.User
 	err := c.BindJSON(&user)
@@ -159,11 +137,7 @@ func loginUser(c *gin.Context) {
 			"message": err.Error(),
 		})
 	} else {
-		session := sessions.Default(c)
-		session.Set("user", db)
-		session.Set("loggedIn", true)
-		session.Set("subscribtion", db.Subscription)
-		session.Save()
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": "User logged in",
 			"data":    db,
@@ -174,30 +148,25 @@ func loginUser(c *gin.Context) {
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins:     []string{"https://safefledge.com", "http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
-	secret := lib.GetEnvVariable("SESSION_SECRET")
-	store := cookie.NewStore([]byte(secret))
-	store.Options(sessions.Options{
-		MaxAge: 86400 * 7,
-	})
-	r.Use(sessions.Sessions("user-session", store))
+
 	r.GET("/", home)
 
 	//Data collection manually from aviation-safety.net
-	authGroup := r.Group("/api/v2").Use(handler.NoAuthRequired())
+	authGroup := r.Group("/v2")
 	authGroup.GET("/scrape", scrapeWebSiteRequest)
 	authGroup.GET("/record/:id", getRecordFromAccidients)
 	authGroup.POST("/airline", createAirline)
-	authGroup.POST("/email", sendEmail)
 
-	//User authentication
-	authGroup.POST("/user", createUser)
-	authGroup.POST("/login", loginUser)
+	//User authentication and registration routes
+	authGroupUser := r.Group("/v2")
+	authGroupUser.POST("/register", createUser)
+	authGroupUser.POST("/login", loginUser)
 
 	return r
 }

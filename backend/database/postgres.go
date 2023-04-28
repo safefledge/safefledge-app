@@ -8,11 +8,12 @@ import (
 	"os"
 	"time"
 
-	"golang.org/x/crypto/bcrypt"
-
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/alexedwards/scs/gormstore"
+	"github.com/alexedwards/scs/v2"
 	"github.com/joho/godotenv"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	databaselib "safefledge.com/m/v2/database/database_lib"
 )
 
@@ -20,7 +21,7 @@ var db *gorm.DB
 var err error
 
 type SafetyRating struct {
-	ID                         int           `json:"id" gorm:"primaryKey"` //primary key
+	gorm.Model                               //primary key
 	OperatorName               string        `json:"operator_name"`
 	OperatorCode               string        `json:"operator_code"`
 	CountryName                string        `json:"country_name"`
@@ -52,7 +53,7 @@ type Factor struct {
 }
 
 type OpinionData struct {
-	ID        int       `json:"id"`
+	gorm.Model
 	Opinion   string    `json:"opinion"`
 	Count     int       `json:"count"`
 	CreatedAt time.Time `json:"created_at"`
@@ -65,12 +66,12 @@ type Accident struct {
 	Location            string        `json:"location"`
 	PhaseOfFlight       string        `json:"phase_of_flight"`
 	AccidentDescription string        `json:"accident_description"`
-	SafetyRatingID      int           `json:"safety_rating_id"`
+	SafetyRatingID      uint          `json:"safety_rating_id"`
 	SafetyRating        *SafetyRating `json:"safety_rating" gorm:"many2many:accidents"`
 }
 
 type User struct {
-	ID           uint      `gorm:"primary_key"`
+	gorm.Model
 	Email        string    `gorm:"unique" json:"email"`
 	Username     string    `json:"username"`
 	Password     string    `json:"password"`
@@ -86,6 +87,8 @@ type Email struct {
 	Subject string `json:"subject"`
 	Body    string `json:"body"`
 }
+
+var sessionManager *scs.SessionManager
 
 func getEnvVariable(key string) string {
 	err := godotenv.Load()
@@ -103,13 +106,17 @@ func ConnectPostgresDB() {
 		password = getEnvVariable("DB_PASS")
 		dbname   = getEnvVariable("DB_NAME")
 	)
-	connection := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=require", host, port, user, dbname, password)
-
-	db, err = gorm.Open("postgres", connection)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=require", host, user, password, dbname, port)
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&SafetyRating{}, &User{}, &OpinionData{}, &Accident{})
+
+	sessionManager = scs.New()
+	if sessionManager.Store, err = gormstore.New(db); err != nil {
+		log.Fatal(err)
+	}
+	db.AutoMigrate(&SafetyRating{}, &Accident{}, &OpinionData{}, &User{})
 }
 
 func GetDB() *gorm.DB {
@@ -120,7 +127,7 @@ func CreateOrGetAirlineInDatabaseByName(airlineName string) (airline *SafetyRati
 	airline = &SafetyRating{}
 	err = db.Where("airline = ?", airlineName).First(airline).Error
 	if err != nil {
-		if !gorm.IsRecordNotFoundError(err) {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, err
 		}
 		airline.OperatorName = airlineName
@@ -138,7 +145,7 @@ func NewCreateOrGetAirline(airline *SafetyRating) (airline2 *SafetyRating, err e
 	airline2 = &SafetyRating{}
 	err = db.Where("operator_name = ?", airline.OperatorName).First(airline2).Error
 	if err != nil {
-		if !gorm.IsRecordNotFoundError(err) {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, err
 		}
 		err = db.Create(airline).Error
@@ -150,10 +157,11 @@ func NewCreateOrGetAirline(airline *SafetyRating) (airline2 *SafetyRating, err e
 }
 
 func AddRecordToAirlineAccidents(airline *SafetyRating, data *Accident) (err error) {
-	err = db.Model(airline).Association("Accidents").Append(data).Error
+	err = db.Model(airline).Association("Accidents").Append(data)
 	if err != nil {
 		return err
 	}
+
 	return
 }
 
@@ -309,7 +317,7 @@ func GetRecordFromAirlineAccidents(airlineID int) ([]Accident, error) {
 }
 
 func AddRecordToAirlineOpinionData(airline *SafetyRating, data *OpinionData) (err error) {
-	err = db.Model(airline).Association("OpinionData").Append(data).Error
+	err = db.Model(airline).Association("OpinionData").Append(data)
 	if err != nil {
 		return err
 	}

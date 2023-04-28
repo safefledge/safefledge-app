@@ -4,23 +4,12 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"safefledge.com/m/v2/database"
 	"safefledge.com/m/v2/handler"
 )
-
-var mc *memcache.Client
-
-func init() {
-	viper.SetConfigFile("ENV")
-	viper.ReadInConfig()
-	viper.AutomaticEnv()
-	port := viper.Get("PORT")
-	mc = memcache.New(":" + port.(string))
-}
 
 func home(c *gin.Context) {
 	c.JSON(200, gin.H{
@@ -149,30 +138,10 @@ func loginUser(c *gin.Context) {
 			"message": err.Error(),
 		})
 	} else {
-		user, err := mc.Get("user")
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
-			})
-		}
-		subscription, err := mc.Get("subscription")
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": err.Error(),
-			})
-		}
-		if string(user.Value) == db.Email && string(subscription.Value) == db.Subscription {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": "User already logged in",
-			})
-		} else {
-			mc.Set(&memcache.Item{Key: "user", Value: []byte(db.Email), Expiration: 3600})
-			mc.Set(&memcache.Item{Key: "subscription", Value: []byte(db.Subscription), Expiration: 3600})
-			c.JSON(http.StatusOK, gin.H{
-				"message": "User logged in",
-				"data":    db,
-			})
-		}
+		c.JSON(http.StatusOK, gin.H{
+			"message": "User logged in",
+			"data":    db,
+		})
 	}
 }
 

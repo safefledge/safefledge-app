@@ -10,10 +10,12 @@ import { useState } from "react";
 import Link from "@/components/Link";
 import GoogleButton from "@/components/GoogleButton";
 import { calculatePasswordStrength } from "@/addons/functions/calculatePasswordStrength";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const locale = useLocale();
   const auth_translations = useTranslations("Auth");
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -22,12 +24,43 @@ export default function Page() {
     resolver: zodResolver(validationSchema),
   });
   const onSubmit: SubmitHandler<ValidationSchemaInterface> = (data) => {
-    console.log(data);
+    const {email, password, fullname} = data;
+    const [firstName, lastName] = fullname.split(" ");
+    const username = `${firstName.toLowerCase()}.${lastName.toLowerCase()}`;
+    async function registerUser() {
+      const response = await fetch(`https://api.safefledge.com/v2/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          username,
+          first_name: firstName,
+          last_name: lastName,
+        })
+      });
+      const data = await response.json();
+      if(!data.data){
+        setError(true);
+        setErrorMessage("Email already exists");
+        setTimeout(() => {
+          setError(false);
+          setErrorMessage("None");
+        }, 3000);
+      } else {
+        router.push(`${locale}/auth/login?email=${email}&password=${password}`);
+      }
+    }
+    registerUser();
   };
   //states
   const [isUserSeePassword, setIsUserSeePassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [passwordStrengthText, setPasswordStrengthText] = useState("None");
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("None");
 
 
 
@@ -112,9 +145,12 @@ export default function Page() {
               </span>
             </div>
             {errors.password && (
-              <span className="text-red-500 text-sm">
+              <span className="text-red-500 text-XS">
                 {errors.password?.message}
               </span>
+            )}
+            {error && (
+              <span className="text-red-500 text-sm">{errorMessage}</span>
             )}
             <div className="flex justify-center items-center w-full">
               <div className="h-2 w-full bg-gray-300 rounded-full overflow-hidden">

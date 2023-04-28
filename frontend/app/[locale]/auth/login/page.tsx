@@ -5,12 +5,19 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { validationSchemaLogin } from "@/addons/schemas/ValidationSchemaLogin";
 import { ValidationSchemaLogin } from "@/addons/interface/interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import zxcvbn from "zxcvbn";
 import Link from "@/components/Link";
 import GoogleButton from "@/components/GoogleButton";
 
-export default function Page() {
+export default function Page({
+  params
+} : {
+  params: {
+    email: string;
+    password: string;
+  }
+}) {
   const locale = useLocale();
   const auth_translations = useTranslations("Auth");
   const {
@@ -21,12 +28,42 @@ export default function Page() {
     resolver: zodResolver(validationSchemaLogin),
   });
   const onSubmit: SubmitHandler<ValidationSchemaLogin> = (data) => {
-    console.log(data);
+    const {email, password} = data;
+    async function loginUser() {
+      const response = await fetch(`https://api.safefledge.com/v2/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        })
+      })
+      const data = await response.json();
+      if(!data.data){
+        setError(true);
+        setErrorMessage("Email or Password is incorrect");
+        setTimeout(() => {
+          setError(false);
+          setErrorMessage("None");
+        }, 3000);
+      }
+      console.log(data);
+    }
+    loginUser();
   };
   //states
   const [isUserSeePassword, setIsUserSeePassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [passwordStrengthText, setPasswordStrengthText] = useState("None");
+  const [email, setEmail] = useState(params.email);
+  const [password, setPassword] = useState(params.password);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("None");
+
+
+
 
 
 
@@ -52,6 +89,7 @@ export default function Page() {
             <input
               className="w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
               type="email"
+              value={email}
               placeholder="Email"
               {...register("email")}
             />
@@ -64,6 +102,7 @@ export default function Page() {
               <input
                 className="w-full h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
                 type={isUserSeePassword ? "text" : "password"}
+                value={password}
                 placeholder={auth_translations("Password")}
                 {...register("password")}
               />

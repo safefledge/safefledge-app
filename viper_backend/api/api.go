@@ -140,9 +140,13 @@ func loginUser(c *gin.Context) {
 			"message": err.Error(),
 		})
 	} else {
+		session := sessions.Default(c)
+		session.Set("user", db)
+		session.Set("loggedIn", true)
+		session.Set("sub", db.Subscription)
+		session.Save()
 		c.JSON(http.StatusOK, gin.H{
 			"message": "User logged in",
-			"data":    db,
 		})
 	}
 }
@@ -172,15 +176,6 @@ func SetupRouter() *gin.Engine {
 	r.Use(sessions.Sessions("usersession", store))
 
 	r.GET("/", home)
-
-	r.GET("/v2/redistest", func(c *gin.Context) {
-		session := sessions.Default(c)
-		session.Set("key", "value")
-		session.Save()
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Redis test",
-		})
-	})
 
 	//Data collection manually from aviation-safety.net
 	authGroup := r.Group("/v2").Use(handler.AuthRequiredAdmin())

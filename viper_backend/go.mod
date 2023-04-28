@@ -11,6 +11,7 @@ require (
 	github.com/antchfx/xmlquery v1.2.4 // indirect
 	github.com/antchfx/xpath v1.1.8 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/boj/redistore v0.0.0-20180917114910-cd5dcc76aeff // indirect
 	github.com/bytedance/sonic v1.8.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
@@ -23,6 +24,7 @@ require (
 	github.com/goccy/go-json v0.10.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/gomodule/redigo v2.0.0+incompatible // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect

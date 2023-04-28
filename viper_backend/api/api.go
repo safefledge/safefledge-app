@@ -5,6 +5,8 @@ import (
 	"strconv"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"safefledge.com/m/v2/database"
@@ -138,9 +140,13 @@ func loginUser(c *gin.Context) {
 			"message": err.Error(),
 		})
 	} else {
+		session := sessions.Default(c)
+		session.Set("user", db)
+		session.Set("subscription", db.Subscription)
+		session.Set("loggedIn", "true")
+		session.Save()
 		c.JSON(http.StatusOK, gin.H{
 			"message": "User logged in",
-			"data":    db,
 		})
 	}
 }
@@ -157,6 +163,9 @@ func SetupRouter() *gin.Engine {
 	viper.SetConfigFile("ENV")
 	viper.ReadInConfig()
 	viper.AutomaticEnv()
+	secret := viper.Get("SESSION_SECRET")
+	store, _ := redis.NewStore(10, "tcp", viper.GetString("REDIS_URL"), "", []byte(secret.(string)))
+	r.Use(sessions.Sessions("user-session", store))
 
 	r.GET("/", home)
 

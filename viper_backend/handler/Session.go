@@ -17,7 +17,9 @@ func SessionCheck() gin.HandlerFunc {
 			})
 			c.Abort()
 		} else {
-			c.Next()
+			c.JSON(http.StatusOK, gin.H{
+				"message": "Authorized",
+			})
 		}
 
 	}

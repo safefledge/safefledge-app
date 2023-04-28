@@ -135,7 +135,7 @@ export default function Page({
             )}
             
           </div>
-          <div className="flex w-[320px]">
+          <div className="flex w-[320px] mt-4">
             <span className="text-[12px] text-[#92929D] text-center">
                 {auth_translations("Terms&Conditions2")}{" "}<Link className=" text-[#0072C6]" href="/user/notice" locale={locale}>
                     {auth_translations("UserNotice")}{" "}

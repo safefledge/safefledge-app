@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -141,6 +142,7 @@ func loginUser(c *gin.Context) {
 		})
 	} else {
 		session := sessions.Default(c)
+		fmt.Print(session)
 		session.Set("loggedIn", "true")
 		session.Save()
 		c.JSON(http.StatusOK, gin.H{

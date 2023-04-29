@@ -13,7 +13,8 @@ export default function DashboardNavbar(){
     const [activeTab, setActiveTab] = useState("Home");
     
     if (session === true){
-        <nav className="navbar bg-[#2F80ED] w-full h-[70px] flex flex-col md:flex-row justify-between">
+        return (
+            <nav className="navbar bg-[#2F80ED] w-full h-[70px] flex flex-col md:flex-row justify-between">
             <div className="flex items-center md:items-start md:mt-4 md:ml-4">
                 <Image
                 src="/images/safefledgelogowhite.svg"
@@ -79,6 +80,7 @@ export default function DashboardNavbar(){
 
             </div>
         </nav>
+        )
     } else {
         return null;
     }

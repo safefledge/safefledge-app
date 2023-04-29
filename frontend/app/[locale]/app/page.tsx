@@ -1,5 +1,8 @@
 "use client"
 
+import Dashboard from "@/components/Dashboard";
+import Loading from "@/components/Loading";
+import NonAuthorized from "@/components/NonAuthorized";
 import useSession from "@/hooks/useSession";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -11,22 +14,16 @@ export default function Page(){
 
     if(loading){
         return (
-            <div className="flex justify-center items-center h-screen">
-                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#56CCF2]"></div>
-            </div>
+            <Loading />
         )
     }
     if(session){
         return (
-            <div className="flex justify-center items-center h-screen">
-                <h1 className="text-2xl font-bold">{auth_translations("Welcome")}</h1>
-            </div>
+           <Dashboard />
         )
     } else if (session === false){
         return (
-            <div className="flex justify-center items-center h-screen">
-                <h1 className="text-2xl font-bold">{auth_translations("Please login")}</h1>
-            </div>
+            <NonAuthorized />
         )
     }
 }

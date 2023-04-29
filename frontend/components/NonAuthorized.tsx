@@ -3,7 +3,11 @@
 import { useTranslations } from "next-intl";
 
 
-export default function NonAuthorized(){
+export default function NonAuthorized({
+    locale
+} : {
+    locale: string
+}){
     const auth_translations = useTranslations("App");
 
     return (

@@ -4,14 +4,12 @@ import Dashboard from "@/components/Dashboard";
 import Loading from "@/components/Loading";
 import NonAuthorized from "@/components/NonAuthorized";
 import useSession from "@/hooks/useSession";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 
 
 export default function Page(){
     const locale = useLocale();
-    const auth_translations = useTranslations("App");
     const {loading, session} = useSession();
-
     if(loading){
         return (
             <Loading />
@@ -19,11 +17,11 @@ export default function Page(){
     }
     if(session){
         return (
-           <Dashboard />
+           <Dashboard locale={locale}/>
         )
     } else if (session === false){
         return (
-            <NonAuthorized />
+            <NonAuthorized locale={locale}/>
         )
     }
 }

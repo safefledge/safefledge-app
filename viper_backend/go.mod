@@ -8,8 +8,8 @@ require (
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
 	github.com/andybalholm/cascadia v1.2.0 // indirect
 	github.com/antchfx/htmlquery v1.2.3 // indirect
-	github.com/antchfx/xmlquery v1.2.4 // indirect
-	github.com/antchfx/xpath v1.1.8 // indirect
+	github.com/antchfx/xmlquery v1.3.1 // indirect
+	github.com/antchfx/xpath v1.1.10 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bytedance/sonic v1.8.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -69,7 +69,6 @@ require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/gocolly/colly/v2 v2.1.0
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/joho/godotenv v1.5.1
 	github.com/mailersend/mailersend-go v1.3.1
 	github.com/prometheus/client_golang v1.15.0
 	github.com/spf13/viper v1.15.0

@@ -24,7 +24,7 @@ export default function DashboardNavbar(){
                 />
             </div>
             <div className="flex gap-6 items-center justify-center md:justify-end">
-                <div className={`w-[129px] h-[40px] ${activeTab === "Home" ? "bg-[#5595F6] rounded-[200px] text-white" : "bg-none "} flex items-center justify-center font-normal text-[16px] cursor-pointer gap-[6px]`} onClick={() => setActiveTab("Home")}>
+                <div className={`w-[129px] h-[40px] ${activeTab === "Home" ? "bg-[#5595F6] rounded-[200px] text-white" : "bg-none "} flex items-center justify-center font-normal text-[16px] cursor-pointer gap-[6px] hover:bg-[#5595F6] hover:transition-all hover:ease-in hover:rounded-[200px]`} onClick={() => setActiveTab("Home")}>
                     <Image 
                     className="mb-[3px]"
                     src="/images/navbar-dashboard/Home.svg"
@@ -34,7 +34,7 @@ export default function DashboardNavbar(){
                     />
                     <Link href="/app" className="text-white font-normal text-[16px]" locale={locale}>Home</Link>
                 </div>
-                <div className={`w-[129px] h-[40px] ${activeTab === "Flights" ? "bg-[#5595F6] rounded-[200px] text-white" : "bg-none "} flex items-center justify-center font-normal text-[16px] cursor-pointer gap-[6px]`} onClick={() => setActiveTab("Flights")}>
+                <div className={`w-[129px] h-[40px] ${activeTab === "Flights" ? "bg-[#5595F6] rounded-[200px] text-white" : "bg-none "} flex items-center justify-center font-normal text-[16px] cursor-pointer gap-[6px] hover:bg-[#5595F6] hover:transition-all hover:ease-in hover:rounded-[200px]`} onClick={() => setActiveTab("Flights")}>
                     <Image
                     className="mb-[3px]"
                     src="/images/navbar-dashboard/Flights.svg"
@@ -44,7 +44,7 @@ export default function DashboardNavbar(){
                     />
                     <Link href="/app/flights" className="text-white font-normal text-[16px]" locale={locale}>My Flights</Link>
                 </div>
-                <div className={`w-[193px] h-[40px] ${activeTab === "Tracking" ? "bg-[#5595F6] rounded-[200px] text-white" : "bg-none "} flex items-center justify-center font-normal text-[16px] cursor-pointer gap-[6px]`} onClick={() => setActiveTab("Tracking")}>
+                <div className={`w-[193px] h-[40px] ${activeTab === "Tracking" ? "bg-[#5595F6] rounded-[200px] text-white" : "bg-none "} flex items-center justify-center font-normal text-[16px] cursor-pointer gap-[6px] hover:bg-[#5595F6] hover:transition-all hover:ease-in hover:rounded-[200px]`} onClick={() => setActiveTab("Tracking")}>
                     <Image
                     className="mb-[3px]"
                     src="/images/navbar-dashboard/Tracking.svg"
@@ -54,7 +54,7 @@ export default function DashboardNavbar(){
                     />
                     <Link href="/app/real-time-flight-tracking" className="text-white font-normal text-[16px]" locale={locale}>Real Time Tracking</Link>
                 </div>
-                <div className={`w-[129px] h-[40px] ${activeTab === "Settings" ? "bg-[#5595F6] rounded-[200px] text-white" : "bg-none "} flex items-center justify-center font-normal text-[16px] cursor-pointer gap-[6px]`} onClick={() => setActiveTab("Settings")}>
+                <div className={`w-[129px] h-[40px] ${activeTab === "Settings" ? "bg-[#5595F6] rounded-[200px] text-white" : "bg-none "} flex items-center justify-center font-normal text-[16px] cursor-pointer gap-[6px] hover:bg-[#5595F6] hover:transition-all hover:ease-in hover:rounded-[200px]`} onClick={() => setActiveTab("Settings")}>
                     <Image
                     className="mb-[3px]"
                     src="/images/navbar-dashboard/Settings.svg"

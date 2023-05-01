@@ -20,6 +20,11 @@ export default function Home() {
       const error = t("Newsletter_error")
       setError(true);
       setErrorMessage(error);
+      const timeout = setTimeout(() => {
+        setError(false);
+        setErrorMessage("");
+        clearTimeout(timeout);
+      }, 3000)
       return;
     }
     const request = await fetch("https://api.safefledge.com/v2/newsletter", {
@@ -36,6 +41,11 @@ export default function Home() {
       const error = t("Newsletter_error")
       setError(true);
       setErrorMessage(error);
+      const timeout = setTimeout(() => {
+        setError(false);
+        setErrorMessage("");
+        clearTimeout(timeout);
+      }, 3000)
     }
   }
   

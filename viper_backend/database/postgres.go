@@ -78,6 +78,10 @@ type Factor struct {
 	Normalize bool
 }
 
+type Newsletter struct {
+	Email string `json:"email"`
+}
+
 type Email struct {
 	To      string `json:"to"`
 	Subject string `json:"subject"`
@@ -101,7 +105,7 @@ func ConnectPostgresDB() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&SafetyRating{}, &User{}, &OpinionData{}, &Accident{})
+	db.AutoMigrate(&SafetyRating{}, &User{}, &OpinionData{}, &Accident{}, &Newsletter{})
 }
 
 func GetDB() *gorm.DB {
@@ -120,6 +124,14 @@ func CreateOrGetAirlineInDatabaseByName(airlineName string) (airline *SafetyRati
 		if err != nil {
 			return nil, err
 		}
+	}
+	return
+}
+
+func AddNewsletterEmail(email *Newsletter) (err error) {
+	err = db.Create(email).Error
+	if err != nil {
+		return err
 	}
 	return
 }

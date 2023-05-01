@@ -151,6 +151,26 @@ func loginUser(c *gin.Context) {
 	}
 }
 
+func addEmailToNewsletter(c *gin.Context) {
+	var email database.Newsletter
+	err := c.BindJSON(&email)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
+	err = database.AddNewsletterEmail(&email)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Email added to newsletter",
+		})
+	}
+}
+
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
@@ -188,6 +208,9 @@ func SetupRouter() *gin.Engine {
 	authGroupUser.POST("/register", createUser)
 	authGroupUser.POST("/login", loginUser)
 	authGroupUser.GET("/session/check", handler.SessionCheck())
+
+	//Newsletter
+	authGroupUser.POST("/newsletter", addEmailToNewsletter)
 
 	return r
 }

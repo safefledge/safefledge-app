@@ -167,6 +167,7 @@ func addEmailToNewsletter(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Email added to newsletter",
+			"success": true,
 		})
 	}
 }

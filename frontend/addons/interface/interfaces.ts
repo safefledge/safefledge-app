@@ -29,3 +29,9 @@ export type ValidationSchemaLogin = {
     password: string;
 }
 
+
+export interface MultiCityUserProps {
+    id: number;
+    name: string;
+}
+

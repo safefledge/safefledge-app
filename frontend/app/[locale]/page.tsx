@@ -16,6 +16,12 @@ export default function Home() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if(email === ""){
+      const error = t("Newsletter_error")
+      setError(true);
+      setErrorMessage(error);
+      return;
+    }
     const request = await fetch("https://api.safefledge.com/v2/newsletter", {
       method: "POST",
       headers: {

@@ -1,6 +1,6 @@
 
 
-import { InputDateProps } from "@/interface/interfaces"
+import { InputDateProps } from "@/addons/interface/interfaces"
 
 export default function InputDate({
     type,

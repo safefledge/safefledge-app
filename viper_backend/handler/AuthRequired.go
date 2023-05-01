@@ -26,8 +26,8 @@ func AuthRequired() gin.HandlerFunc {
 func AuthRequiredAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
-		user := session.Get("admin")
-		if user == nil {
+		sub := session.Get("sub")
+		if sub == nil || sub != "admin" {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"message": "Unauthorized",
 			})

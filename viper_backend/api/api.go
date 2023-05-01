@@ -105,10 +105,56 @@ func createAirline(c *gin.Context) {
 	})
 }
 
+func createUser(c *gin.Context) {
+	var user database.User
+	err := c.BindJSON(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
+	db, err := database.CreateUser(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "User created",
+			"data":    db,
+		})
+	}
+}
+
+func loginUser(c *gin.Context) {
+	var user database.User
+	err := c.BindJSON(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	}
+	db, err := database.LoginUser(user.Email, user.Password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+	} else {
+		session := sessions.Default(c)
+		session.Set("user", db)
+		session.Set("loggedIn", true)
+		session.Set("sub", db.Subscription)
+		session.Save()
+		c.JSON(http.StatusOK, gin.H{
+			"message": "User logged in",
+		})
+	}
+}
+
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins:     []string{"https://safefledge.com", "http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -117,12 +163,18 @@ func SetupRouter() *gin.Engine {
 	viper.SetConfigFile("ENV")
 	viper.ReadInConfig()
 	viper.AutomaticEnv()
-	secret := viper.Get("SESSION_SECRET")
-	store := cookie.NewStore([]byte(secret.(string)))
+	secret := viper.GetString("SESSION_SECRET")
+	store := cookie.NewStore([]byte(secret))
 	store.Options(sessions.Options{
-		MaxAge: 86400 * 7,
+		MaxAge:   60 * 60 * 24 * 7,
+		HttpOnly: true,
+		Secure:   true,
+		Path:     "/", //Cookie path
+		Domain:   "*", //Cookie domain
+		SameSite: http.SameSiteStrictMode,
 	})
-	r.Use(sessions.Sessions("user-session", store))
+	r.Use(sessions.Sessions("usersession", store))
+
 	r.GET("/", home)
 
 	//Data collection manually from aviation-safety.net
@@ -130,6 +182,12 @@ func SetupRouter() *gin.Engine {
 	authGroup.GET("/scrape", scrapeWebSiteRequest)
 	authGroup.GET("/record/:id", getRecordFromAccidients)
 	authGroup.POST("/airline", createAirline)
+
+	//User authentication and registration routes
+	authGroupUser := r.Group("/v2")
+	authGroupUser.POST("/register", createUser)
+	authGroupUser.POST("/login", loginUser)
+	authGroupUser.GET("/session/check", handler.SessionCheck())
 
 	return r
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AuthRequired() gin.HandlerFunc {
+func SessionCheck() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		user := session.Get("user")
@@ -17,7 +17,9 @@ func AuthRequired() gin.HandlerFunc {
 			})
 			c.Abort()
 		} else {
-			c.Next()
+			c.JSON(http.StatusOK, gin.H{
+				"message": "Authorized",
+			})
 		}
 
 	}

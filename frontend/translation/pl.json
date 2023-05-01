@@ -51,6 +51,15 @@
       "RegistrBtn": "Zarejestruj się",
       "SigninBtn": "Zaloguj się",
       "Or": "lub",
-      "Continue with Google": "Kontynuuj z Google"
+      "Continue wi,th Google": "Kontynuuj z Google"
+    },
+    "Newsletter":
+    {
+      "Newsletter": "Newsletter",
+      "Newsletter_subtitle": "Zapisz się do naszego newslettera",
+      "Newsletter_placeholder": "Wpisz swój adres email",
+      "Newsletter_button": "Zapisz się",
+      "Newsletter_success": "Dziękujemy za zapisanie się do naszego newslettera!",
+      "Newsletter_error": "Coś poszło nie tak. Spróbuj ponownie później."
     }
 }

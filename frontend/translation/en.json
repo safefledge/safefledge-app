@@ -60,5 +60,14 @@
       "Home": "Home",
       "Welcome": "Welcome",
       "Please login": "Please login to continue"
+    },
+    "Newsletter":
+    {
+      "Newsletter": "Newsletter",
+      "Newsletter_subtitle": "Subscribe to our newsletter",
+      "Newsletter_placeholder": "Enter your email address",
+      "Newsletter_button": "Subscribe",
+      "Newsletter_success": "Thank you for subscribing to our newsletter!",
+      "Newsletter_error": "Something went wrong. Please try again later."
     }
 }

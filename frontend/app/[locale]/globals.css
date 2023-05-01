@@ -1,17 +1,34 @@
-
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 
-@font-face {
-  font-family: 'CircularARegular';
-  src: url('.../../../../public/font/Euclid Circular A Regular.ttf') format('ttf'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+@layer base {
+    html {
+        font-family: 'Montserrat', sans-serif;
+        background: linear-gradient(90deg, #56CCF2 -32%, #2F80ED 145.82%);
+    }
 }
 
-@layer base {
-  html {
-    font-family: 'CircularARegular', sans-serif;
-  }
 
+
+.fade-in-out {
+  opacity: 0;
+  animation: fade-in 1s ease-in forwards;
+}
+
+@keyframes fade-in {
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

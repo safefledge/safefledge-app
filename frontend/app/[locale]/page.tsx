@@ -24,7 +24,7 @@ export default function Home() {
       body: JSON.stringify({ email }),
     })
     const response = await request.json();
-    if(response.status === "success"){
+    if(response.success === true){
       setSuccess(true);
     } else {
       const error = t("Newsletter_error")
@@ -61,7 +61,7 @@ export default function Home() {
             ) : null}
           </div>
           <button
-            className="w-[376px] h-[38px] bg-[#56CCF2] rounded-[10px] text-white text-[16px] font-medium mt-6"
+            className="w-[376px] h-[38px] bg-[#56CCF2] rounded-[10px] text-white text-[16px] font-medium mt-6 hover:bg-[#2D9CDB] transition-all"
             type="submit"
           >
             {t("Newsletter_button")}

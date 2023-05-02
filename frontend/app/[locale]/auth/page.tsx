@@ -77,12 +77,7 @@ export default function Page() {
   return (
     <div className="from-[#56CCF2] justify-center items-center flex flex-col h-screen">
       <div className="flex flex-col justify-center items-center gap-6">
-        <Image
-          src="/images/logo-auth.svg"
-          alt="Logo"
-          width={250}
-          height={200}
-        />
+        
         <form
           className="w-[300px] md:w-[424px] lg:w-[424px] h-auto rounded-[20px] bg-white flex flex-col items-center"
           onSubmit={handleSubmit(onSubmit)}
@@ -177,7 +172,7 @@ export default function Page() {
             {auth_translations("Or")}{" "}
           </span>
           <GoogleButton />
-          <div className="w-[300px] md:w-[424px] lg:w-[424px] h-[45px] rounded-br-[20px] rounded-bl-[20px] bg-[#0072C6] relative top-[20px] flex justify-center">
+          <div className="w-[260px] md:w-[376px] lg:w-[376px] h-[45px] rounded-[10px] rounded-bl-[20px] bg-[#0072C6] relative top-[20px] flex justify-center">
             <span className="text-[16px] text-white text-center my-auto">
                 {auth_translations("Already_have_an_account")}{" "}
                 <Link className="ml-[3px] text-[#F8F8F8] hover:underline transition-all" href="/auth/login" locale={locale}>

@@ -3,6 +3,7 @@ import zxcvbn from "zxcvbn";
 
 export function calculatePasswordStrength(password: string) {
     const result = zxcvbn(password);
+    console.log(result)
     const score = result.score;
     let passwordStrengthText = "";
     switch (result.score) {

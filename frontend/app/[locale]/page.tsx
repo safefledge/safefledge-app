@@ -59,25 +59,25 @@ export default function Home() {
           width={250}
           height={200}
         />
-        <form className="w-[424px] h-[205px] rounded-[20px] bg-white flex flex-col items-center mt-2"
+        <form className="w-[250px] md:w-[424px] lg:w-[424px] h-auto rounded-[20px] bg-white flex flex-col items-center mt-2"
         onSubmit={handleSubmit}
         >
-          <h1 className="text-black text-[24px] leading-7 mt-8 font-bold">
+          <h1 className="text-black text-[16px] lg:text-[24px] md:text-[24px] leading-7 mt-8 font-bold">
             {t("Newsletter_subtitle")}
           </h1>
           <div className="flex flex-col justify-center items-center gap-[16px] mt-6">
             <input
             onChange={(e) => setEmail(e.target.value)}
-              className="w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
+              className="w-[240px] md:w-[376px] lg:w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
               type="email"
               placeholder={t("Newsletter_placeholder")}
             />
             {error === true ? (
-              <p className="text-red-500 text-[16px]">{errorMessage}</p>
+              <p className="text-red-500 text-[16px] mx-4">{errorMessage}</p>
             ) : null}
           </div>
           <button
-            className="w-[376px] h-[38px] bg-[#56CCF2] rounded-[10px] text-white text-[16px] font-medium mt-6 hover:bg-[#2D9CDB] transition-all"
+            className="w-[240px] md:w-[376px] lg:w-[376px] h-[38px] mb-4 bg-[#56CCF2] rounded-[10px] text-white text-[16px] font-medium mt-6 hover:bg-[#2D9CDB] transition-all"
             type="submit"
           >
             {t("Newsletter_button")}

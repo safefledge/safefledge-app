@@ -77,7 +77,13 @@ export default function Page() {
   return (
     <div className="from-[#56CCF2] justify-center items-center flex flex-col h-screen">
       <div className="flex flex-col justify-center items-center gap-6">
-        
+        <Image
+        className="relative top-[320px] right-[80px] rotate-2 z-0 opacity-25"
+          src="/images/logoIconOnly.svg"
+          alt="logo"
+          width={400}
+          height={600}
+        />
         <form
           className="w-[300px] md:w-[424px] lg:w-[424px] h-auto rounded-[20px] bg-white flex flex-col items-center"
           onSubmit={handleSubmit(onSubmit)}
@@ -87,7 +93,7 @@ export default function Page() {
           </h1>
           <div className="flex flex-col justify-center items-center gap-[16px] mt-6">
             <input
-              className="w-[260px] md:w-[376px] lg:w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
+              className="w-[260px] md:w-[376px] lg:w-[376px] h-[38px] z-20 bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
               type="email"
               placeholder="Email"
               {...register("email")}
@@ -98,7 +104,7 @@ export default function Page() {
               </span>
             )}
             <input
-              className="w-[260px] md:w-[376px] lg:w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
+              className="w-[260px] md:w-[376px] lg:w-[376px] h-[38px] z-20 bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
               placeholder={auth_translations("Fullname")}
               {...register("fullname")}
             />
@@ -109,7 +115,7 @@ export default function Page() {
             )}
             <div className="relative w-[260px] md:w-[376px] lg:w-[376px]">
               <input
-                className="w-[260px] md:w-[376px] lg:w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
+                className="w-[260px] md:w-[376px] lg:w-[376px] h-[38px] z-20 bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
                 type={isUserSeePassword ? "text" : "password"}
                 placeholder={auth_translations("Password")}
                 {...register("password")}

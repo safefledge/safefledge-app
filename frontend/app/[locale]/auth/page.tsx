@@ -159,7 +159,7 @@ export default function Page() {
               <span className="text-gray-400 text-sm ml-2">{passwordStrengthText}</span>
             </div>
           </div>
-          <div className="flex w-[200px] md:w-[320px] lg:w-[320px] mt-6">
+          <div className="flex w-[200px] md:w-[320px] lg:w-[320px] mt-2">
             <span className="text-[12px] text-[#92929D] text-center">
                 {auth_translations("Terms&Conditions")}{" "}<Link className=" text-[#0072C6]" href="/user/notice" locale={locale}>
                     {auth_translations("UserNotice")}{" "}

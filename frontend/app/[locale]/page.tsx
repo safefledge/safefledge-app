@@ -59,16 +59,16 @@ export default function Home() {
           width={250}
           height={200}
         />
-        <form className="w-[250px] md:w-[424px] lg:w-[424px] h-auto rounded-[20px] bg-white flex flex-col items-center mt-2"
+        <form className="w-[250px] md:w-[424px] lg:w-[424px] h-auto rounded-[20px] bg-white flex flex-col items-center mt-2 transition-all"
         onSubmit={handleSubmit}
         >
-          <h1 className={`text-black text-[16px] lg:text-[24px] md:text-[24px] leading-7 mt-8 font-bold ${locale === "pl" && "ml-2 lg:ml-0 md:ml-0"}`}>
+          <h1 className={`text-black text-[16px] lg:text-[24px] md:text-[24px] leading-7 mt-8 font-bold transition-all ${locale === "pl" && "ml-2 lg:ml-0 md:ml-0"}`}>
             {t("Newsletter_subtitle")}
           </h1>
           <div className="flex flex-col justify-center items-center gap-[16px] mt-6">
             <input
             onChange={(e) => setEmail(e.target.value)}
-              className="w-[240px] md:w-[376px] lg:w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
+              className="w-[240px] md:w-[376px] lg:w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium transition-all"
               type="email"
               placeholder={t("Newsletter_placeholder")}
             />

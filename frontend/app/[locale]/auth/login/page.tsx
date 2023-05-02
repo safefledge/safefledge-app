@@ -55,8 +55,6 @@ export default function Page({
   };
   //states
   const [isUserSeePassword, setIsUserSeePassword] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
-  const [passwordStrengthText, setPasswordStrengthText] = useState("None");
   const [email, setEmail] = useState(params.email);
   const [password, setPassword] = useState(params.password);
   const [error, setError] = useState(false);
@@ -128,9 +126,9 @@ export default function Page({
                 </svg>
               </span>
             </div>
-            {errors.password && (
+            {error && (
               <span className="text-red-500 text-sm">
-                {errors.password?.message}
+                {errorMessage}
               </span>
             )}
             

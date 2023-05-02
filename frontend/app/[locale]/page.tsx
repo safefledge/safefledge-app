@@ -62,7 +62,7 @@ export default function Home() {
         <form className="w-[250px] md:w-[424px] lg:w-[424px] h-auto rounded-[20px] bg-white flex flex-col items-center mt-2"
         onSubmit={handleSubmit}
         >
-          <h1 className="text-black text-[16px] lg:text-[24px] md:text-[24px] leading-7 mt-8 font-bold">
+          <h1 className={`text-black text-[16px] lg:text-[24px] md:text-[24px] leading-7 mt-8 font-bold ${locale === "pl" && "ml-2 lg:ml-0 md:ml-0"}`}>
             {t("Newsletter_subtitle")}
           </h1>
           <div className="flex flex-col justify-center items-center gap-[16px] mt-6">
@@ -92,8 +92,8 @@ export default function Home() {
           width={250}
           height={200}
         />
-        <form className="w-[424px] h-[100px] rounded-[20px] bg-white flex flex-col items-center mt-2">
-          <h1 className={`text-black ${locale === "pl" ? "text-[15px]" : "text-[18px]"} leading-7 mt-8 font-bold justify-center my-auto transition-all fade-in-out`}>
+        <form className="w-[250px] md:w-[424px] lg:w-[424px] h-[100px] rounded-[20px] bg-white flex flex-col items-center mt-2">
+          <h1 className={`text-black ${locale === "pl" ? "text-[15px]" : "text-[18px]"} leading-7 mt-8 font-bold justify-center my-auto transition-all fade-in-out ml-2 md:ml-0 lg:ml-0`}>
             {t("Newsletter_success")}
           </h1>
         </form>

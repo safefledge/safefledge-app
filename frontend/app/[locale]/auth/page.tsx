@@ -84,7 +84,7 @@ export default function Page() {
           height={200}
         />
         <form
-          className="w-[424px] h-auto rounded-[20px] bg-white flex flex-col items-center"
+          className="w-[300px] md:w-[424px] lg:w-[424px] h-auto rounded-[20px] bg-white flex flex-col items-center"
           onSubmit={handleSubmit(onSubmit)}
         >
           <h1 className="text-black text-[24px] leading-7 mt-8 font-bold">
@@ -92,7 +92,7 @@ export default function Page() {
           </h1>
           <div className="flex flex-col justify-center items-center gap-[16px] mt-6">
             <input
-              className="w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
+              className="w-[260px] md:w-[376px] lg:w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
               type="email"
               placeholder="Email"
               {...register("email")}
@@ -103,7 +103,7 @@ export default function Page() {
               </span>
             )}
             <input
-              className="w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
+              className="w-[260px] md:w-[376px] lg:w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
               placeholder={auth_translations("Fullname")}
               {...register("fullname")}
             />
@@ -112,9 +112,9 @@ export default function Page() {
                 {errors.fullname?.message}
               </span>
             )}
-            <div className="relative w-[376px]">
+            <div className="relative w-[260px] md:w-[376px] lg:w-[376px]">
               <input
-                className="w-full h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
+                className="w-[260px] md:w-[376px] lg:w-[376px] h-[38px] bg-[#F8F8F8] border-1 border-solid rounded-[10px] placeholder:leading-5 placeholder:text-[16px] pl-5 text-sm font-medium"
                 type={isUserSeePassword ? "text" : "password"}
                 placeholder={auth_translations("Password")}
                 {...register("password")}
@@ -159,7 +159,7 @@ export default function Page() {
               <span className="text-gray-400 text-sm ml-2">{passwordStrengthText}</span>
             </div>
           </div>
-          <div className="flex w-[320px] mt-6">
+          <div className="flex w-[200px] md:w-[320px] lg:w-[320px] mt-6">
             <span className="text-[12px] text-[#92929D] text-center">
                 {auth_translations("Terms&Conditions")}{" "}<Link className=" text-[#0072C6]" href="/user/notice" locale={locale}>
                     {auth_translations("UserNotice")}{" "}
@@ -170,14 +170,14 @@ export default function Page() {
                 </Link>
             </span>
           </div>
-          <button className="w-[376px] h-[38px] bg-[#0072C6] rounded-[10px] text-white text-[16px] font-bold mt-6 hover:bg-[#2F80ED] transition-all ease-in">
+          <button className="w-[260px] md:w-[376px] lg:w-[376px] h-[38px] bg-[#0072C6] rounded-[10px] text-white text-[16px] font-bold mt-6 hover:bg-[#2F80ED] transition-all ease-in">
             {auth_translations("RegistrBtn")}
           </button>
           <span className="text-[12px] text-[#92929D] text-center mt-2">
             {auth_translations("Or")}{" "}
           </span>
           <GoogleButton />
-          <div className="w-[424px] h-[45px] rounded-br-[20px] rounded-bl-[20px] bg-[#0072C6] relative top-[20px] flex justify-center">
+          <div className="w-[300px] md:w-[424px] lg:w-[424px] h-[45px] rounded-br-[20px] rounded-bl-[20px] bg-[#0072C6] relative top-[20px] flex justify-center">
             <span className="text-[16px] text-white text-center my-auto">
                 {auth_translations("Already_have_an_account")}{" "}
                 <Link className="ml-[3px] text-[#F8F8F8] hover:underline transition-all" href="/auth/login" locale={locale}>

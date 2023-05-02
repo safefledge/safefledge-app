@@ -84,7 +84,7 @@ export default function Page() {
           height={200}
         />
         <form
-          className="w-[424px] h-[515px] rounded-[20px] bg-white flex flex-col items-center"
+          className="w-[424px] h-auto rounded-[20px] bg-white flex flex-col items-center"
           onSubmit={handleSubmit(onSubmit)}
         >
           <h1 className="text-black text-[24px] leading-7 mt-8 font-bold">

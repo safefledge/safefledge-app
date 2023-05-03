@@ -20,11 +20,8 @@ export default async function AppLayout({
     children
 } : Props) {
     return (
-        <>
-        <section className="nav-bar">
-            <DashboardNavbar />
-        </section>
-            {children}
-        </>
+           <main>
+                {children}
+           </main>
     )
 }

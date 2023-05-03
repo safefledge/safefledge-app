@@ -3,14 +3,25 @@
 import Image from "next/image"
 import Link from "./Link"
 import { useLocale } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSession from "@/hooks/useSession";
 
 
-export default function DashboardNavbar(){
+export default function DashboardNavbar({
+    tab
+} : {
+    tab?: string
+}){
     const locale = useLocale();
     const {loading, session} = useSession();
     const [activeTab, setActiveTab] = useState("Home");
+
+    useEffect(() => {
+        if(tab){
+            setActiveTab(tab)
+        }
+    }, [tab])
+
     
     if (session === true){
         return (
@@ -32,7 +43,7 @@ export default function DashboardNavbar(){
                     width={24}
                     height={24}
                     />
-                    <Link href="/app" className="text-white font-normal text-[16px]" locale={locale}>Home</Link>
+                    <Link href="/app/home" className="text-white font-normal text-[16px]" locale={locale}>Home</Link>
                 </div>
                 <div className={`w-[129px] h-[40px] ${activeTab === "Flights" ? "bg-[#5595F6] rounded-[200px] text-white" : "bg-none "} flex items-center justify-center font-normal text-[16px] cursor-pointer gap-[6px] hover:bg-[#5595F6] hover:transition-all hover:ease-in hover:rounded-[200px]`} onClick={() => setActiveTab("Flights")}>
                     <Image

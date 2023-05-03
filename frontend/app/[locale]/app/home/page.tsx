@@ -1,6 +1,7 @@
 "use client"
 
 import Dashboard from "@/components/Dashboard";
+import DashboardNavbar from "@/components/DashboardNavbar";
 import Loading from "@/components/Loading";
 import NonAuthorized from "@/components/NonAuthorized";
 import useSession from "@/hooks/useSession";
@@ -17,7 +18,9 @@ export default function Page(){
     }
     if(session){
         return (
-           <Dashboard locale={locale} userProps={
+            <>
+            <section className="dashboard">
+            <Dashboard locale={locale} userProps={
             {
                email: "marcelborowczak@outlook.com",
                avatar: "https://avatars.githubusercontent.com/u/56132740?v=4",
@@ -54,6 +57,8 @@ export default function Page(){
                ]
             }
            }/>
+            </section>
+            </>
         )
     } else if (session === false){
         return (

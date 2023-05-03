@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import DashboardButton from "./DashboardButton";
+import Link from "./Link";
 
 export default function Dashboard({
   locale,
@@ -76,7 +77,11 @@ const [activeFlightCityImage, setActiveFlightCityImage] = useState<string | null
                 </p>
                 <div className="flex flex-col justify-start items-start mt-8">
                     {
-                        activeFlight?.status ? <DashboardButton type="manage" text={app("Manage_Booking")}/> : <DashboardButton type="book" text={app("Book_Now")}/>
+                        activeFlight?.status ? <>
+                        <Link href={`/app/flights/${activeFlight?.bookingReference}`}>
+                           <DashboardButton type="manage" text={app("Manage_Booking")}/>
+                        </Link>
+                        </> : <DashboardButton type="book" text={app("Book_Now")}/>
                     }
               </div>
               </div>

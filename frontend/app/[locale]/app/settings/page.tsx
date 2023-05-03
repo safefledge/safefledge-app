@@ -1,10 +1,29 @@
+"use client"
+
+import Loading from "@/components/Loading";
+import useSession from "@/hooks/useSession";
+import { useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
 
 
 
 export default function Page(){
-    return (
-        <div className="flex justify-center items-center h-screen">
-                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#56CCF2]"></div>
-            </div>
-    )
+    const locale = useLocale();
+    const {loading, session} = useSession();
+
+    const router = useRouter();
+    
+    if(loading){
+        return <Loading />
+    }
+    if(session){
+        return (
+            <>
+            <h1 className="text-3xl font-bold text-center">Settings</h1>
+            </>
+        )
+    }
+    if (!session) {
+        router.push(`/${locale}/auth/login`);
+    }
 }

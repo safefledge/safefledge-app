@@ -16,7 +16,7 @@ export default function useSession() {
                 setSession(true);
             } else if (session.message === "Unauthorized") {
                 setLoading(false);
-                setSession(true); //DEV DEBUG: TRUE SESSION FOR DEVELOPMNET WITHOUT LOGIN
+                setSession(false); 
             }
         }
 

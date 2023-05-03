@@ -1,20 +1,20 @@
 "use client"
 
 import Dashboard from "@/components/Dashboard";
-import DashboardNavbar from "@/components/DashboardNavbar";
-import Loading from "@/components/Loading";
-import NonAuthorized from "@/components/NonAuthorized";
 import useSession from "@/hooks/useSession";
+import { useRouter } from 'next/navigation';
 import { useLocale } from "next-intl";
+import Loading from "@/components/Loading";
 
 
 export default function Page(){
     const locale = useLocale();
     const {loading, session} = useSession();
+
+    const router = useRouter();
+
     if(loading){
-        return (
-            <Loading />
-        )
+       <Loading />
     }
     if(session){
         return (
@@ -61,8 +61,6 @@ export default function Page(){
             </>
         )
     } else if (session === false){
-        return (
-            <NonAuthorized locale={locale}/>
-        )
+        return router.push(`${locale}/auth/login`);
     }
 }

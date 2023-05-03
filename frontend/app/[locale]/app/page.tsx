@@ -17,7 +17,43 @@ export default function Page(){
     }
     if(session){
         return (
-           <Dashboard locale={locale}/>
+           <Dashboard locale={locale} userProps={
+            {
+               email: "marcelborowczak@outlook.com",
+               avatar: "https://avatars.githubusercontent.com/u/56132740?v=4",
+               fullname: "Marcel Borowczak",
+               flights: [
+                {
+                    id: 1,
+                    departureAirport: "Warsaw",
+                    arrivalAirport: "London",
+                    departureDate: "2023-05-15",
+                    flightType: "round-trip",
+                    departureTime: "10:00",
+                    price: 100,
+                    currency: "PLN",
+                    airline: "Lot Polish Airlines",
+                    flightNumber: "LOT245",
+                    status: "active",
+                    bookingReference: "FA2WD3"
+                },
+                {
+                    id: 2,
+                    departureAirport: "London",
+                    arrivalAirport: "Warsaw",
+                    departureDate: "2023-05-20",
+                    flightType: "round-trip",
+                    departureTime: "10:00",
+                    price: 100,
+                    currency: "PLN",
+                    airline: "Lot Polish Airlines",
+                    flightNumber: "LOT246",
+                    status: "active",
+                    bookingReference: "FASWD3"
+                }
+               ]
+            }
+           }/>
         )
     } else if (session === false){
         return (

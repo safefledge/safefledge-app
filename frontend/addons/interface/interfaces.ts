@@ -29,3 +29,26 @@ export type ValidationSchemaLogin = {
     password: string;
 }
 
+
+export interface IUserProps{
+    email: string;
+    avatar: string;
+    fullname: string;
+    flights: IFlightProps[];
+}
+
+interface IFlightProps {
+    id: number;
+    flightNumber: string;
+    airline: string;
+    departureDate: string;
+    departureTime: string;
+    departureAirport: string;
+    arrivalAirport: string;
+    flightType: string;
+    price: number;
+    currency: string;
+    status: string;
+    bookingReference: string;
+}
+

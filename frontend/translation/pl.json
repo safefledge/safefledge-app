@@ -52,5 +52,22 @@
       "SigninBtn": "Zaloguj się",
       "Or": "lub",
       "Continue with Google": "Kontynuuj z Google"
+    },
+    "App": {
+      "Home": "Home",
+      "Welcome": "Witamy",
+      "Please login": "Proszę się zalogować",
+      "No_Trips": "Brak podrózy. Zabookuj coś 😄",
+      "Only": "Tylko",
+      "Left_Date": "Dni Pozostało Do Twojej Kolejnej Podrózy!",
+      "Book_Now": "Zarezerwuj teraz",
+      "To": "Do",
+      "Reference": "Kod Rezerwacji",
+      "Manage_Booking": "Zarządzaj Rezerwacją",
+      "Latest_travel_recommendations": "Ostatnie Rekomendacje Podrózy",
+      "Location": "Lokalizacja",
+      "Travel_class": "Klasa Podrózy",
+      "Price": "Cena",
+      "More_Filters": "Więcej filtrów"
     }
 }

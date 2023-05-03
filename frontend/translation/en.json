@@ -59,6 +59,18 @@
     "App": {
       "Home": "Home",
       "Welcome": "Welcome",
-      "Please login": "Please login to continue"
+      "Please login": "Please login to continue",
+      "No_Trips": "No Trips. You Should Book Something 😄",
+      "Only": "Only",
+      "Left_Date": "Days Left To Your Next Trip!",
+      "Book_Now": "Book Now",
+      "To": "To",
+      "Reference": "Booking Reference",
+      "Manage_Booking": "Manage Booking",
+      "Latest_travel_recommendations": "Latest Travel Recommendations",
+      "Location": "Location",
+      "Travel_class": "Travel Class",
+      "Price": "Price",
+      "More_Filters": "More Filters"
     }
 }

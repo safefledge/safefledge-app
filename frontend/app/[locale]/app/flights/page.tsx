@@ -13,17 +13,17 @@ export default function Page(){
 
     const router = useRouter();
     
-    if(loading){
+    if(loading === true){
         return <Loading />
     }
-    if(session){
+    if(session === true){
         return (
             <>
             <h1 className="text-3xl font-bold text-center">Flights</h1>
             </>
         )
     }
-    if (!session) {
+    if (session === false) {
         router.push(`/${locale}/auth/login`);
     }
 }

@@ -12,11 +12,11 @@ export default function useSession() {
             const response = await fetch("https://api.safefledge.com/v2/session/check");
             const session = await response.json();
             if (session.message === "Authorized") {
-                setLoading(false);
                 setSession(true);
-            } else if (session.message === "Unauthorized") {
                 setLoading(false);
-                setSession(false); 
+            } else {
+                setSession(true); // set to false
+                setLoading(false);
             }
         }
 

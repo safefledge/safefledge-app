@@ -5,18 +5,19 @@ import useSession from "@/hooks/useSession";
 import { useRouter } from 'next/navigation';
 import { useLocale } from "next-intl";
 import Loading from "@/components/Loading";
+import { useEffect } from "react";
 
 
 export default function Page(){
     const locale = useLocale();
     const {loading, session} = useSession();
-
     const router = useRouter();
 
-    if(loading){
-       <Loading />
+
+    if(loading === true){
+       return <Loading />
     }
-    if(session){
+    if(session === true){
         return (
             <>
             <section className="dashboard">
@@ -54,13 +55,99 @@ export default function Page(){
                     status: "active",
                     bookingReference: "FASWD3"
                 }
+               ],
+               travelRecommendations: [
+                {
+                    departureAirport: "London",
+                    arrivalAirport: "Warsaw",
+                    subtitle: "Poland",
+                    price: 650,
+                    currency: "PLN",
+                    flightType: "Round Trip",
+                    travelClass: "Economy",
+                },
+                {
+                    departureAirport: "Milan",
+                    arrivalAirport: "Amsterdam",
+                    subtitle: "Netherlands",
+                    price: 700,
+                    currency: "PLN",
+                    flightType: "Round Trip",
+                    travelClass: "Economy",
+                },
+                {
+                    departureAirport: "Poznań",
+                    arrivalAirport: "Berlin",
+                    subtitle: "Germany",
+                    price: 850,
+                    currency: "PLN",
+                    flightType: "Round Trip",
+                    travelClass: "Economy",
+                },
+                {
+                    departureAirport: "Cracow",
+                    arrivalAirport: "Paris",
+                    subtitle: "France",
+                    price: 950,
+                    currency: "PLN",
+                    flightType: "Round Trip",
+                    travelClass: "Economy",
+                },
+                {
+                    departureAirport: "Warsaw",
+                    arrivalAirport: "Budapest",
+                    subtitle: "Hungary",
+                    price: 1000,
+                    currency: "PLN",
+                    flightType: "Round Trip",
+                    travelClass: "Economy",
+                },
+                {
+                    departureAirport: "Milan",
+                    arrivalAirport: "Dubai",
+                    subtitle: "United Arab Emirates",
+                    price: 1200,
+                    currency: "PLN",
+                    flightType: "Round Trip",
+                    travelClass: "Economy",
+                },
+                {
+                    departureAirport: "Berlin",
+                    arrivalAirport: "Neapol",
+                    subtitle: "Italy",
+                    price: 1200,
+                    currency: "PLN",
+                    flightType: "Round Trip",
+                    travelClass: "Economy",
+                },
+                {
+                    departureAirport: "Milan",
+                    arrivalAirport: "Islamabad",
+                    subtitle: "Pakistan",
+                    price: 1200,
+                    currency: "PLN",
+                    flightType: "Round Trip",
+                    travelClass: "Economy",
+                },
+                {
+                    departureAirport: "Warsaw",
+                    arrivalAirport: "Los Angeles",
+                    subtitle: "United States",
+                    price: 1200,
+                    currency: "PLN",
+                    flightType: "Round Trip",
+                    travelClass: "Economy",
+
+                }
+                
                ]
             }
            }/>
             </section>
             </>
         )
-    } else if (session === false){
-        return router.push(`${locale}/auth/login`);
+    } else if (session === false) {
+        return router.push(`/${locale}/auth/login`);
+        
     }
 }

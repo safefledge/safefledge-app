@@ -35,6 +35,7 @@ export interface IUserProps{
     avatar: string;
     fullname: string;
     flights: IFlightProps[];
+    travelRecommendations: ITravelRecommendationProps[];
 }
 
 interface IFlightProps {
@@ -52,3 +53,12 @@ interface IFlightProps {
     bookingReference: string;
 }
 
+export interface ITravelRecommendationProps {
+    departureAirport: string;
+    arrivalAirport: string;
+    subtitle: string;
+    price: number;
+    currency: string;
+    flightType: string;
+    travelClass: string;
+}

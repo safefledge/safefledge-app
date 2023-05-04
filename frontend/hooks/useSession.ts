@@ -15,7 +15,7 @@ export default function useSession() {
                 setSession(true);
                 setLoading(false);
             } else {
-                setSession(true); // set to false
+                setSession(false); // set to false
                 setLoading(false);
             }
         }

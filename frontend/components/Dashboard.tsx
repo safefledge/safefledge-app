@@ -209,7 +209,7 @@ export default function Dashboard({
       <div className="hidden md:flex flex-col w-full h-auto">
         <div className="flex flex-row justify-between md:justify-start items-center w-full h-[50px]">
             <p className="text-[#000000] text-[14px] md:text-[24px] lg:text-[24px] font-semibold ml-[20px]">
-                Tutaj coś będzie
+                
             </p>
         </div>
       </div>

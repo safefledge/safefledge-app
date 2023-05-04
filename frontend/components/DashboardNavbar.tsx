@@ -90,7 +90,7 @@ export default function DashboardNavbar({
                 <div className="photo rounded-full w-[50px] h-[50px]">
                     <Image
                     className="rounded-full"
-                    src="/images/Portrait_Placeholder.png"
+                    src="/images/navbar-dashboard/avatar-test/Avatar.jpg"
                     alt="Profile Picture"
                     width={50}
                     height={50}

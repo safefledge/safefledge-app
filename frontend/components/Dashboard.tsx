@@ -168,9 +168,9 @@ export default function Dashboard({
               </button>
             </div>
           </div>
-          <div className="w-[1400px] h-auto grid grid-cols-3 gap-[20px]">{
+          <div className="w-[1400px] h-auto grid grid-cols-1 md:grid-cols-3 gap-[20px]">{
              travelRecommendations.map((item, index) => (
-                <div className="w-[443px] h-[268px] bg-[#FFFFFF] border-1 border-solid border-[#EEEEEE] rounded-[10px] flex flex-col ml-[20px] mt-[20px]">
+                <div className="w-[338px] md:w-full lg:w-full h-[330px] md:h-[268px] bg-[#FFFFFF] border-1 border-solid border-[#EEEEEE] rounded-[10px] flex flex-col ml-[20px] mt-[20px]">
                     <div className="relative w-full h-[189px]">
                         <Image
                         src={`/images/dashboard/testImage/${item?.arrivalAirport}.jpg`}
@@ -179,9 +179,9 @@ export default function Dashboard({
                         className="rounded-t-[10px]"
                         />
                     </div>
-                    <div className="flex flex-row justify-start items-start w-full h-[77px]">
-                        <div className="flex flex-col w-[350px] justify-start items-start ml-[20px] mt-[10px]">
-                            <p className="text-[#000000] text-[24px] font-semibold">
+                    <div className="flex flex-col md:flex-row justify-start items-start w-full h-[89px]">
+                        <div className="flex flex-col justify-start items-start ml-[20px] mt-[10px]">
+                            <p className="text-[#000000] text-[22px] w-[280px] font-semibold">
                                 {item?.departureAirport} {" "}
                                 {item?.departureAirport && item?.arrivalAirport ? `${app("To")}` : ""} {item?.arrivalAirport}
                             </p>
@@ -189,7 +189,8 @@ export default function Dashboard({
                                 {item?.subtitle}
                             </p>
                         </div>
-                        <button className="flex flex-col relative right-5 w-[161px] h-[51px] justify-center items-center rounded-[10px] bg-gradient-to-r from-[#56CCF2]  to-[#2F80ED] mt-[10px]">
+                        <Link href={`/app/flights/book?booking=${item?.arrivalAirport}?from=${item?.departureAirport}?price=${item?.price}?class=${item?.travelClass}`}>
+                        <button className="flex flex-col relative ml-4 md:ml-0 lg:ml-0 md:right-[15px] lg:right-[15px] w-[161px] h-[51px] justify-center items-center rounded-[10px] bg-gradient-to-r from-[#56CCF2]  to-[#2F80ED] mt-[10px]">
                             <p className="text-[#FFFFFF] text-[14px] font-semibold">
                                 {item?.currency} {item?.price}*
                             </p>
@@ -197,6 +198,7 @@ export default function Dashboard({
                                 {item?.flightType}/{item?.travelClass}
                             </p>
                         </button>
+                        </Link>
                     </div>
                 </div>
              )
@@ -204,7 +206,7 @@ export default function Dashboard({
           }</div>
         </div>
       </div>
-      <div className="flex flex-col w-full h-auto">
+      <div className="hidden md:flex flex-col w-full h-auto">
         <div className="flex flex-row justify-between md:justify-start items-center w-full h-[50px]">
             <p className="text-[#000000] text-[14px] md:text-[24px] lg:text-[24px] font-semibold ml-[20px]">
                 Tutaj coś będzie

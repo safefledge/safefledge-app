@@ -5,7 +5,6 @@ import useSession from "@/hooks/useSession";
 import { useRouter } from 'next/navigation';
 import { useLocale } from "next-intl";
 import Loading from "@/components/Loading";
-import { useEffect } from "react";
 
 
 export default function Page(){

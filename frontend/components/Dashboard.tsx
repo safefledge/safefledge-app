@@ -190,7 +190,7 @@ export default function Dashboard({
                             </p>
                         </div>
                         <Link href={`/app/flights/book?booking=${item?.arrivalAirport}?from=${item?.departureAirport}?price=${item?.price}?class=${item?.travelClass}`}>
-                        <button className="flex flex-col relative ml-4 md:ml-0 lg:ml-0 md:right-[15px] lg:right-[15px] w-[161px] h-[51px] justify-center items-center rounded-[10px] bg-gradient-to-r from-[#56CCF2]  to-[#2F80ED] mt-[10px]">
+                        <button className="flex flex-col relative ml-4 md:ml-0 lg:ml-0 md:right-[15px] lg:right-[15px] w-[161px] h-[51px] justify-center items-center rounded-[10px] bg-gradient-to-r from-[#56CCF2] to-[#2F80ED] mt-[10px] hover:from-[#2F80ED] hover:to-[#56CCF2] transition-all duration-300 ease-in-out">
                             <p className="text-[#FFFFFF] text-[14px] font-semibold">
                                 {item?.currency} {item?.price}*
                             </p>

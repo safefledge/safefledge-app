@@ -27,12 +27,14 @@ export default function DashboardNavbar({
         return (
             <nav className="navbar bg-[#2F80ED] w-full h-[70px] flex flex-row md:flex-row justify-between">
             <div className="items-center hidden md:flex md:visible md:items-start md:mt-4 md:ml-4">
-                <Image
+               <Link href="/app/home" locale={locale}>
+               <Image
                 src="/images/safefledgelogowhite.svg"
                 alt="SafeFledge Logo"
                 width={164}
                 height={40}
                 />
+               </Link>
             </div>
             <div className="hidden md:flex lg:flex gap-6 items-center justify-center md:justify-end">
                 <div className={`w-[129px] h-[40px] ${activeTab === "Home" ? "bg-[#5595F6] rounded-[200px] text-white" : "bg-none "} flex items-center justify-center font-normal text-[16px] cursor-pointer gap-[6px] hover:bg-[#5595F6] hover:transition-all hover:ease-in hover:rounded-[200px]`} onClick={() => setActiveTab("Home")}>
@@ -78,12 +80,14 @@ export default function DashboardNavbar({
             </div>
             <div className="flex md:hidden lg:hidden gap-6 items-center">
             <div className="items-center visible ml-[20px] md:flex md:visible md:items-start md:mt-4 md:ml-4">
+                <Link href="/app/home" locale={locale}>
                 <Image
                 src="/images/safefledgelogowhite.svg"
                 alt="SafeFledge Logo"
                 width={164}
                 height={40}
                 />
+                </Link>
             </div>
             </div>
             <div className="flex items-center justify-end mr-[26px] md:justify-end md:mr-8">
